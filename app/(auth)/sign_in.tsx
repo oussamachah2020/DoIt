@@ -1,23 +1,27 @@
-import {
-  Alert,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import Logo from "@assets/images/app_icons/logo.svg";
 import { fontFamily } from "@constants/typography";
 import { Button, TextInput } from "react-native-paper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "expo-router";
 import { supabase } from "@lib/supabase";
+import { Session } from "@supabase/supabase-js";
+import { useAuthStore } from "../../src/zustand/authStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Page() {
+export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setSession, setIsAuth, session } = useAuthStore();
+
+  const storeData = async (access_token: string) => {
+    try {
+      await AsyncStorage.setItem("token", access_token);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -27,7 +31,9 @@ export default function Page() {
         password: password,
       })
       .then((data) => {
-        console.log(data);
+        setIsAuth(true);
+        setSession(data?.data?.session as Session);
+        storeData(data.data.session?.access_token as string);
       })
       .finally(() => {
         setLoading(false);
@@ -45,8 +51,7 @@ export default function Page() {
     >
       <View style={style.top}>
         <Logo style={{ marginBottom: 10 }} />
-        <Text style={style.title}>Welcome to DO IT</Text>
-        <Text style={style.subTitle}>create an account and Join us now!</Text>
+        <Text style={style.title}>Welcome Back</Text>
       </View>
       <View style={style.form}>
         <TextInput
@@ -61,8 +66,13 @@ export default function Page() {
           onChangeText={(text) => setPassword(text)}
           right={<TextInput.Icon icon="eye" />}
         />
-        <Button mode="contained" onPress={signUpWithEmail} style={style.button}>
-          Press me
+        <Button
+          mode="contained"
+          onPress={signUpWithEmail}
+          style={style.button}
+          loading={loading === true}
+        >
+          {loading === true ? "" : "Login"}
         </Button>
         <Text style={style.SignInLink}>
           Don't have an account ?{" "}

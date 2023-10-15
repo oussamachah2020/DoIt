@@ -14,10 +14,15 @@ import { useState } from "react";
 import { Link } from "expo-router";
 import { supabase } from "@lib/supabase";
 
-export default function Page() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visible, setVisile] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setVisile(!visible);
+  };
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -56,13 +61,15 @@ export default function Page() {
         />
         <TextInput
           label="Password"
-          secureTextEntry
+          secureTextEntry={visible}
           value={password}
           onChangeText={(text) => setPassword(text)}
-          right={<TextInput.Icon icon="eye" />}
+          right={
+            <TextInput.Icon icon="eye" onPress={togglePasswordVisibility} />
+          }
         />
         <Button mode="contained" onPress={signUpWithEmail} style={style.button}>
-          Press me
+          Create Account
         </Button>
         <Text style={style.SignInLink}>
           Already have an account ?{" "}

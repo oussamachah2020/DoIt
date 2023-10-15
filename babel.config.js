@@ -14,6 +14,7 @@ module.exports = function (api) {
             "@lib": "./src/lib",
             "@constants": "./src/constants",
             "@assets": "./assets",
+            "@store": "./src/zustand",
           },
         },
       ],
