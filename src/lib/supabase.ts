@@ -12,4 +12,7 @@ export const supabase = createClient(SUPBASE_URL, SUPABASE_ANON_KEY, {
     persistSession: true,
     detectSessionInUrl: false,
   },
+  db: {
+    schema: "public",
+  },
 });

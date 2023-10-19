@@ -13,11 +13,16 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visible, setVisile] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setVisile(!visible);
+  };
   const { setSession, setIsAuth, session } = useAuthStore();
 
-  const storeData = async (access_token: string) => {
+  const storeData = async (session: Session) => {
     try {
-      await AsyncStorage.setItem("token", access_token);
+      await AsyncStorage.setItem("session", JSON.stringify(session));
     } catch (e) {
       console.log(e);
     }
@@ -32,14 +37,16 @@ export default function SignIn() {
       })
       .then((data) => {
         setIsAuth(true);
-        setSession(data?.data?.session as Session);
-        storeData(data.data.session?.access_token as string);
+        setSession(data?.data?.session);
+        storeData(data.data.session as Session);
       })
       .finally(() => {
         setLoading(false);
       })
       .catch((err) => Alert.alert(err.message));
   }
+
+  console.log(session);
 
   return (
     <View
@@ -61,10 +68,12 @@ export default function SignIn() {
         />
         <TextInput
           label="Password"
-          secureTextEntry
+          secureTextEntry={visible}
           value={password}
           onChangeText={(text) => setPassword(text)}
-          right={<TextInput.Icon icon="eye" />}
+          right={
+            <TextInput.Icon icon="eye" onPress={togglePasswordVisibility} />
+          }
         />
         <Button
           mode="contained"
@@ -80,11 +89,11 @@ export default function SignIn() {
             href={"/(auth)/sign_up"}
             style={{
               textDecorationLine: "underline",
-              color: "#E26310",
+              color: "#E86188",
               fontWeight: "900",
             }}
           >
-            Sign In
+            Sign Up
           </Link>
         </Text>
       </View>
@@ -115,7 +124,7 @@ const style = StyleSheet.create({
     gap: 30,
   },
   button: {
-    backgroundColor: "#E26310",
+    backgroundColor: "#E84271",
     borderRadius: 5,
     paddingVertical: 5,
   },

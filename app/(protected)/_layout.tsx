@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { PaperProvider } from "react-native-paper";
 
 export default function AppLayout() {
   const [loaded] = useFonts({
@@ -13,13 +14,14 @@ export default function AppLayout() {
     PoppinsSemiBold: require("@assets/fonts/Poppins-SemiBold.ttf"),
   });
 
-  const { isAuth, token, setToken } = useAuthStore();
+  const { isAuth, setSession, session } = useAuthStore();
 
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem("token");
+      const value = await AsyncStorage.getItem("session");
       if (value !== null) {
-        setToken(value);
+        const user_session = JSON.parse(value);
+        setSession(user_session);
       }
     } catch (e) {
       console.log(e);
@@ -40,8 +42,8 @@ export default function AppLayout() {
     return null;
   }
 
-  if (token || isAuth === true) {
-    return <Stack screenOptions={{ headerShown: false }} />;
+  if (session || isAuth === true) {
+    return <Stack screenOptions={{ headerShown: false, animation: "none" }} />;
   } else {
     return <SignIn />;
   }

@@ -18,7 +18,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [visible, setVisile] = useState(false);
+  const [visible, setVisile] = useState(true);
 
   const togglePasswordVisibility = () => {
     setVisile(!visible);
@@ -77,7 +77,7 @@ export default function SignUp() {
             href={"/(auth)/sign_in"}
             style={{
               textDecorationLine: "underline",
-              color: "#E26310",
+              color: "#E86188",
               fontWeight: "900",
             }}
           >
@@ -112,7 +112,7 @@ const style = StyleSheet.create({
     gap: 30,
   },
   button: {
-    backgroundColor: "#E26310",
+    backgroundColor: "#E84271",
     borderRadius: 5,
     paddingVertical: 5,
   },
