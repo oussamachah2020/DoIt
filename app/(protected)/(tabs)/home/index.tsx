@@ -3,6 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -30,56 +31,66 @@ const tasks = [
 
 export default function Home() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [clickedCardIndex, setClickedCardIndex] = useState(0);
 
   function toggleMenu() {
-    setShowMenu(!showMenu);
+    setShowMenu(true);
   }
 
   return (
-    <View>
-      <FloatButton />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity>
-            <MenuBtn />
-          </TouchableOpacity>
-          <Text
-            style={{
-              color: "#fff",
-              fontFamily: fontFamily.semiBold,
-              fontSize: 18,
-              marginTop: 5,
-            }}
+    <TouchableHighlight onPress={() => setShowMenu(false)}>
+      <View>
+        <FloatButton />
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity>
+              <MenuBtn />
+            </TouchableOpacity>
+            <Text
+              style={{
+                color: "#fff",
+                fontFamily: fontFamily.semiBold,
+                fontSize: 18,
+                marginTop: 5,
+              }}
+            >
+              Tasks
+            </Text>
+          </View>
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            style={styles.tasksList}
           >
-            Tasks
-          </Text>
-        </View>
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          style={styles.tasksList}
-        >
-          {tasks.map((task, index) => (
-            <View key={index} style={styles.taskContainer}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 14,
-                }}
-              >
-                <DragBtn />
-                <Text style={styles.taskLabel}>{task}</Text>
+            {tasks.map((task, index) => (
+              <View key={index} style={styles.taskContainer}>
+                {showMenu && index === clickedCardIndex ? <DropDown /> : null}
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 14,
+                    zIndex: 1,
+                  }}
+                >
+                  <DragBtn />
+                  <Text style={styles.taskLabel}>{task}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setClickedCardIndex(index);
+                    toggleMenu();
+                  }}
+                >
+                  <OptionsMenuBtn />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={toggleMenu}>
-                <OptionsMenuBtn />
-              </TouchableOpacity>
-              {showMenu ? <DropDown /> : null}
-            </View>
-          ))}
-        </ScrollView>
+            ))}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </TouchableHighlight>
   );
 }
 
@@ -87,6 +98,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 30,
     marginLeft: 20,
+    elevation: 0,
+    zIndex: 0,
   },
   header: {
     justifyContent: "flex-start",
@@ -103,6 +116,8 @@ const styles = StyleSheet.create({
   tasksList: {
     marginTop: 20,
     height: Dimensions.get("screen").height - 230,
+    elevation: 0,
+    zIndex: 0,
   },
   taskContainer: {
     backgroundColor: "#3A3E51",
@@ -113,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 6,
-    position: "relative",
-    zIndex: 1,
+    elevation: 0,
+    zIndex: 0,
   },
 });

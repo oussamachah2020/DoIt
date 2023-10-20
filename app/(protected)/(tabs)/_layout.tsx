@@ -2,6 +2,14 @@ import { Tabs } from "expo-router";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { fontFamily } from "@constants/typography";
 import { PaperProvider } from "react-native-paper";
+import {
+  Calendar,
+  CalendarR,
+  Home,
+  HomeR,
+  Profile,
+  ProfileR,
+} from "@constants/assets";
 
 export default function AppLayout() {
   return (
@@ -33,9 +41,13 @@ export default function AppLayout() {
             },
             tabBarActiveTintColor: "#E86188",
             tabBarInactiveTintColor: "#fff",
-            tabBarIcon: ({ color }) => (
-              <AntDesign name="home" color={color} size={25} />
-            ),
+            tabBarIcon: ({ color }) => {
+              if (color === "#E86188") {
+                return <HomeR width={22} />;
+              } else {
+                return <Home width={22} />;
+              }
+            },
           }}
         />
         <Tabs.Screen
@@ -50,9 +62,13 @@ export default function AppLayout() {
             },
             tabBarInactiveTintColor: "#fff",
             tabBarActiveTintColor: "#E86188",
-            tabBarIcon: ({ color }) => (
-              <FontAwesome name="calendar" color={color} size={25} />
-            ),
+            tabBarIcon: ({ color }) => {
+              if (color === "#E86188") {
+                return <CalendarR width={22} />;
+              } else {
+                return <Calendar width={22} />;
+              }
+            },
           }}
         />
         <Tabs.Screen
@@ -67,9 +83,13 @@ export default function AppLayout() {
             },
             tabBarInactiveTintColor: "#fff",
             tabBarActiveTintColor: "#E86188",
-            tabBarIcon: ({ color }) => (
-              <FontAwesome name="user-o" color={color} size={25} />
-            ),
+            tabBarIcon: ({ color }) => {
+              if (color === "#E86188") {
+                return <ProfileR width={25} />;
+              } else {
+                return <Profile width={25} />;
+              }
+            },
           }}
         />
       </Tabs>
