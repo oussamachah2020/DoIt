@@ -1,12 +1,13 @@
+import { useTaskStore } from "@store/taskStore";
 import * as React from "react";
 import { FAB, Portal, PaperProvider } from "react-native-paper";
 
-const FloatButton = () => {
+const FloatButton = ({ showModal }: { showModal: () => void }) => {
   const [state, setState] = React.useState({ open: false });
+  const { open } = state;
+  const setOpenTaskForm = useTaskStore((v) => v.setOpenTaskForm);
 
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
-
-  const { open } = state;
 
   return (
     <Portal>
@@ -15,7 +16,7 @@ const FloatButton = () => {
         fabStyle={{
           marginBottom: 70,
           borderRadius: 50,
-          backgroundColor: "#E86188",
+          backgroundColor: "#2F89FC",
         }}
         color="#fff"
         visible
@@ -24,7 +25,7 @@ const FloatButton = () => {
           {
             icon: "plus",
             label: "Add task",
-            onPress: () => console.log("Pressed add"),
+            onPress: () => setOpenTaskForm(true),
           },
 
           {

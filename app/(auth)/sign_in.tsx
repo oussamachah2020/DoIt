@@ -59,12 +59,18 @@ export default function SignIn() {
       <View style={style.top}>
         <Logo style={{ marginBottom: 10 }} />
         <Text style={style.title}>Welcome Back</Text>
+        <Text style={style.subTitle}>
+          Continue your journey of productivity
+        </Text>
       </View>
       <View style={style.form}>
         <TextInput
           label="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
+          contentStyle={{
+            backgroundColor: "#F5F5F5",
+          }}
         />
         <TextInput
           label="Password"
@@ -72,8 +78,18 @@ export default function SignIn() {
           value={password}
           onChangeText={(text) => setPassword(text)}
           right={
-            <TextInput.Icon icon="eye" onPress={togglePasswordVisibility} />
+            <TextInput.Icon
+              icon="eye"
+              onPress={togglePasswordVisibility}
+              style={{
+                backgroundColor: "#F5F5F5",
+              }}
+              containerColor="#F5F5F5"
+            />
           }
+          style={{
+            backgroundColor: "#F5F5F5",
+          }}
         />
         <Button
           mode="contained"
@@ -89,8 +105,8 @@ export default function SignIn() {
             href={"/(auth)/sign_up"}
             style={{
               textDecorationLine: "underline",
-              color: "#E86188",
-              fontWeight: "900",
+              color: "#2F89FC",
+              fontFamily: fontFamily.semiBold,
             }}
           >
             Sign Up
@@ -107,13 +123,13 @@ const style = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    color: "#fff",
+    color: "#000",
     fontFamily: fontFamily.semiBold,
     fontSize: 25,
     textAlign: "center",
   },
   subTitle: {
-    color: "#fff",
+    color: "#000",
     fontFamily: fontFamily.Medium,
     fontSize: 18,
     textAlign: "center",
@@ -124,14 +140,14 @@ const style = StyleSheet.create({
     gap: 30,
   },
   button: {
-    backgroundColor: "#E84271",
+    backgroundColor: "#2F89FC",
     borderRadius: 5,
     paddingVertical: 5,
   },
   SignInLink: {
     fontFamily: fontFamily.regular,
     fontSize: 14,
-    color: "#fff",
+    color: "#000",
     textAlign: "center",
   },
 });

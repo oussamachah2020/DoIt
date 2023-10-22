@@ -1,6 +1,8 @@
 import DragBtn from "@assets/images/icons_svg/drag.svg";
 import OptionsMenuBtn from "@assets/images/icons_svg/verticalMenu.svg";
 import MenuBtn from "@assets/images/icons_svg/menu.svg";
+import Delete from "@assets/images/icons_svg/delete.svg";
+import Edit from "@assets/images/icons_svg/edit.svg";
 
 // Tabs icons
 import Calendar from "@assets/images/icons_svg/calendar.svg";
@@ -22,4 +24,6 @@ export {
   HomeR,
   Profile,
   ProfileR,
+  Delete,
+  Edit,
 };

@@ -7,11 +7,11 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "backgroundColor": "#000517",
+    "backgroundColor": "#F5F5F5",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000517"
+      "backgroundColor": "#F5F5F5"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000517"
+        "backgroundColor": "#F5F5F5"
       }
     },
     "web": {
