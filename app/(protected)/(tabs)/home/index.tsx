@@ -10,37 +10,49 @@ import {
 import FloatButton from "@components/Fab";
 import { fontFamily } from "@constants/typography";
 import { DragBtn, OptionsMenuBtn, MenuBtn } from "@constants/assets";
-import DropDown from "@components/DropDown";
-import React, { useState } from "react";
-import { BottomModal } from "@components/BottomModal";
-
-const tasks = [
-  "task1",
-  "task2",
-  "task3",
-  "task4",
-  "task5",
-  "task6",
-  "task6",
-  "task6",
-  "task6",
-  "task6",
-  "task6",
-  "task6",
-  "task6",
-];
+import React, { useEffect, useState } from "react";
+import { ITask } from "src/types/Entities";
+import { supabase } from "@lib/supabase";
+import { useAuthStore } from "@store/authStore";
+import { CheckBox } from "@rneui/themed";
 
 export default function Home() {
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [clickedCardIndex, setClickedCardIndex] = useState(0);
   const [visible, setVisible] = React.useState(false);
+  const [tasksData, setTasksData] = useState<ITask[]>([]);
+  const [checked, setChecked] = useState<boolean>(false);
+  const session = useAuthStore((v) => v.session);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  function toggleMenu() {
-    setShowMenu(true);
+  async function getTasks() {
+    let { data: tasks, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("userId", session?.user.id);
+
+    if (tasks) {
+      setTasksData(tasks);
+    } else {
+      console.error(error);
+    }
   }
+
+  async function setTaskDone(taskId: string) {
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({ done: true })
+      .eq("id", taskId)
+      .select();
+
+    if (data) {
+      console.log(data);
+    }
+  }
+
+  useEffect(() => {
+    getTasks();
+  }, [tasksData]);
 
   return (
     <View>
@@ -62,6 +74,29 @@ export default function Home() {
           </Text>
         </View>
       </View>
+      <ScrollView style={styles.tasksList}>
+        {tasksData.map((task) => (
+          <View style={styles.taskContainer} key={task.id}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 20,
+              }}
+            >
+              <CheckBox
+                textStyle={styles.taskLabel}
+                checked={checked}
+                onPress={() => setTaskDone(task.id)}
+                title={task.label}
+              />
+            </View>
+            <TouchableOpacity>
+              <OptionsMenuBtn />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -78,18 +113,19 @@ const styles = StyleSheet.create({
     gap: 17,
   },
   taskLabel: {
-    color: "#fff",
-    fontSize: 18,
-    fontFamily: fontFamily.Medium,
-    marginTop: 2,
+    color: "#000",
+    fontSize: 16,
+    fontFamily: fontFamily.regular,
+    // marginTop: 3,
   },
   tasksList: {
     marginTop: 20,
     height: Dimensions.get("screen").height - 230,
-    zIndex: 0,
+    marginLeft: 20,
   },
   taskContainer: {
-    backgroundColor: "#3A3E51",
+    backgroundColor: "#fff",
+    elevation: 5,
     width: "95%",
     height: 52,
     marginBottom: 28,
@@ -97,7 +133,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 6,
-    elevation: 0,
-    zIndex: 0,
   },
 });

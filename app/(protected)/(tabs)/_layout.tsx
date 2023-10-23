@@ -10,10 +10,101 @@ import {
   ProfileR,
 } from "@constants/assets";
 import { BottomModal } from "@components/BottomModal";
+import React, { useEffect } from "react";
+import Toast, {
+  BaseToast,
+  BaseToastProps,
+  ErrorToast,
+  SuccessToast,
+} from "react-native-toast-message";
+import { useAuthStore } from "@store/authStore";
+import { supabase } from "@lib/supabase";
+import { MenuProvider } from "react-native-popup-menu";
 
 export default function AppLayout() {
+  const session = useAuthStore((v) => v.session);
+
+  const toastConfig = {
+    /*
+      Overwrite 'success' type,
+      by modifying the existing `BaseToast` component
+    */
+    success: (props: any) => (
+      <SuccessToast
+        {...props}
+        style={{ borderLeftColor: "#59CE8F" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontFamily: fontFamily.Medium,
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: "rgba(0,0,0,0.5)",
+          fontFamily: fontFamily.regular,
+        }}
+      />
+    ),
+    /*
+      Overwrite 'error' type,
+      by modifying the existing `ErrorToast` component
+    */
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        text1Style={{
+          fontSize: 17,
+          fontFamily: fontFamily.Medium,
+        }}
+        text2Style={{
+          fontSize: 15,
+        }}
+      />
+    ),
+  };
+
+  const saveProfileInfo = async () => {
+    if (session?.user.id) {
+      // Check if a profile with the same userId exists
+      const { data: existingProfiles, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("userId", session.user.id);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      if (existingProfiles.length === 0) {
+        // If no profile with the same userId exists, insert a new one
+        const { data, error } = await supabase.from("profiles").insert([
+          {
+            email: session.user.email,
+            full_name: session?.user.email?.split("@")[0],
+            userId: session.user.id,
+          },
+        ]);
+
+        if (data) {
+          console.log("Profile registered successfully");
+        } else {
+          console.error(error);
+        }
+      } else {
+        console.log("Profile already exists");
+      }
+    }
+  };
+
+  useEffect(() => {
+    saveProfileInfo();
+  }, [session?.user.id]);
+
   return (
-    <>
+    <MenuProvider>
+      <Toast config={toastConfig} />
+
       <BottomModal />
       <PaperProvider>
         <Tabs
@@ -96,6 +187,6 @@ export default function AppLayout() {
           />
         </Tabs>
       </PaperProvider>
-    </>
+    </MenuProvider>
   );
 }

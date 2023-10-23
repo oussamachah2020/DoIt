@@ -46,8 +46,6 @@ export default function SignIn() {
       .catch((err) => Alert.alert(err.message));
   }
 
-  console.log(session);
-
   return (
     <View
       style={{

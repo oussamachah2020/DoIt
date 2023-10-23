@@ -27,12 +27,6 @@ const FloatButton = ({ showModal }: { showModal: () => void }) => {
             label: "Add task",
             onPress: () => setOpenTaskForm(true),
           },
-
-          {
-            icon: "calendar",
-            label: "schedule",
-            onPress: () => console.log("Pressed email"),
-          },
           {
             icon: "bell",
             label: "Remind",
