@@ -15,6 +15,7 @@ import { ITask } from "src/types/Entities";
 import { supabase } from "@lib/supabase";
 import { useAuthStore } from "@store/authStore";
 import { CheckBox } from "@rneui/themed";
+import { router } from "expo-router";
 
 export default function Home() {
   const [visible, setVisible] = React.useState(false);
@@ -76,7 +77,16 @@ export default function Home() {
       </View>
       <ScrollView style={styles.tasksList}>
         {tasksData.map((task) => (
-          <View style={styles.taskContainer} key={task.id}>
+          <TouchableOpacity
+            style={styles.taskContainer}
+            key={task.id}
+            onPress={() =>
+              router.push({
+                pathname: "/(protected)/(task_details)/task_details",
+                params: { taskId: task.id },
+              })
+            }
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -94,7 +104,7 @@ export default function Home() {
             <TouchableOpacity>
               <OptionsMenuBtn />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
