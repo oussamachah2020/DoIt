@@ -19,7 +19,6 @@ import Toast, {
 } from "react-native-toast-message";
 import { useAuthStore } from "@store/authStore";
 import { supabase } from "@lib/supabase";
-import { MenuProvider } from "react-native-popup-menu";
 
 export default function AppLayout() {
   const session = useAuthStore((v) => v.session);
@@ -102,7 +101,7 @@ export default function AppLayout() {
   }, [session?.user.id]);
 
   return (
-    <MenuProvider>
+    <>
       <Toast config={toastConfig} />
 
       <BottomModal />
@@ -187,6 +186,6 @@ export default function AppLayout() {
           />
         </Tabs>
       </PaperProvider>
-    </MenuProvider>
+    </>
   );
 }

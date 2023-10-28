@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MenuProvider } from "react-native-popup-menu";
 
 export default function AppLayout() {
   const [loaded] = useFonts({
@@ -43,9 +44,9 @@ export default function AppLayout() {
 
   if (session || isAuth === true) {
     return (
-      <>
+      <MenuProvider>
         <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-      </>
+      </MenuProvider>
     );
   } else {
     return <SignIn />;
