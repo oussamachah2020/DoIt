@@ -22,7 +22,7 @@ import {
 } from "react-native-popup-menu";
 import { priorities } from "@constants/data";
 import { Button } from "@rneui/themed";
-import Toast from "react-native-toast-message";
+import Toast, { SuccessToast } from "react-native-toast-message";
 
 interface SelectedTaskType {
   label: string;
@@ -66,23 +66,27 @@ export default function TaskDetails() {
   };
 
   const updateTask = async () => {
-    const { data, error } = await supabase
-      .from("tasks")
-      .update({
-        label: task.label,
-        do_at: selectedDate,
-        priority: task.priority,
-      })
-      .eq("id", taskId);
+    try {
+      await supabase
+        .from("tasks")
+        .update({
+          label: task.label,
+          do_at: selectedDate,
+          priority: task.priority,
+          updated_at: new Date(),
+        })
+        .eq("id", taskId);
 
-    if (data) {
-      Toast.show({
-        type: "success",
+      SuccessToast({
         text1: "Good job!",
         text2: "Task created successfully !",
       });
-    } else {
-      console.log(error);
+
+      setTimeout(() => {
+        router.push("/(protected)/(tabs)/home");
+      }, 2000);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -182,6 +186,7 @@ export default function TaskDetails() {
                   <Text
                     style={{
                       fontFamily: fontFamily.regular,
+                      fontSize: 14,
                     }}
                   >
                     <Ionicons

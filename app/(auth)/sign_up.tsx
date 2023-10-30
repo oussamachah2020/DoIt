@@ -33,6 +33,7 @@ export default function SignUp() {
       })
       .then((data) => {
         console.log(data);
+        Alert.alert(`A verification email was sent to ${email}`);
       })
       .finally(() => {
         setLoading(false);
@@ -50,14 +51,17 @@ export default function SignUp() {
     >
       <View style={style.top}>
         <Logo style={{ marginBottom: 10 }} />
-        <Text style={style.title}>Welcome to DO IT</Text>
-        <Text style={style.subTitle}>create an account and Join us now!</Text>
+        <Text style={style.title}>Welcome Back</Text>
+        <Text style={style.subTitle}>Stay Organized, Stay Productive!</Text>
       </View>
       <View style={style.form}>
         <TextInput
           label="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
+          contentStyle={{
+            backgroundColor: "#F5F5F5",
+          }}
         />
         <TextInput
           label="Password"
@@ -65,20 +69,35 @@ export default function SignUp() {
           value={password}
           onChangeText={(text) => setPassword(text)}
           right={
-            <TextInput.Icon icon="eye" onPress={togglePasswordVisibility} />
+            <TextInput.Icon
+              icon="eye"
+              onPress={togglePasswordVisibility}
+              style={{
+                backgroundColor: "#F5F5F5",
+              }}
+              containerColor="#F5F5F5"
+            />
           }
+          style={{
+            backgroundColor: "#F5F5F5",
+          }}
         />
-        <Button mode="contained" onPress={signUpWithEmail} style={style.button}>
-          Create Account
+        <Button
+          mode="contained"
+          onPress={signUpWithEmail}
+          style={style.button}
+          loading={loading === true}
+        >
+          {loading === true ? "" : "Create Account"}
         </Button>
         <Text style={style.SignInLink}>
-          Already have an account ?{" "}
+          Have an account ?{" "}
           <Link
             href={"/(auth)/sign_in"}
             style={{
               textDecorationLine: "underline",
-              color: "#E86188",
-              fontWeight: "900",
+              color: "#2F89FC",
+              fontFamily: fontFamily.semiBold,
             }}
           >
             Sign In
@@ -95,13 +114,13 @@ const style = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    color: "#fff",
+    color: "#000",
     fontFamily: fontFamily.semiBold,
     fontSize: 25,
     textAlign: "center",
   },
   subTitle: {
-    color: "#fff",
+    color: "#000",
     fontFamily: fontFamily.Medium,
     fontSize: 18,
     textAlign: "center",
@@ -112,14 +131,14 @@ const style = StyleSheet.create({
     gap: 30,
   },
   button: {
-    backgroundColor: "#E84271",
+    backgroundColor: "#2F89FC",
     borderRadius: 5,
     paddingVertical: 5,
   },
   SignInLink: {
     fontFamily: fontFamily.regular,
     fontSize: 14,
-    color: "#fff",
+    color: "#000",
     textAlign: "center",
   },
 });

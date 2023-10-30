@@ -28,7 +28,7 @@ export default function SignIn() {
     }
   };
 
-  async function signUpWithEmail() {
+  async function Login() {
     setLoading(true);
     await supabase.auth
       .signInWithPassword({
@@ -91,7 +91,7 @@ export default function SignIn() {
         />
         <Button
           mode="contained"
-          onPress={signUpWithEmail}
+          onPress={Login}
           style={style.button}
           loading={loading === true}
         >

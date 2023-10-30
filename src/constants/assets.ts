@@ -14,6 +14,9 @@ import HomeR from "@assets/images/icons_svg/homeR.svg";
 import Profile from "@assets/images/icons_svg/profile.svg";
 import ProfileR from "@assets/images/icons_svg/profileR.svg";
 
+import Smile from "@assets/images/icons_svg/smile.svg";
+import Trash from "@assets/images/icons_svg/trash.svg";
+
 export {
   DragBtn,
   OptionsMenuBtn,
@@ -26,4 +29,6 @@ export {
   ProfileR,
   Delete,
   Edit,
+  Smile,
+  Trash,
 };

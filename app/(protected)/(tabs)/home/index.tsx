@@ -1,5 +1,7 @@
 import {
   Dimensions,
+  Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,13 +11,105 @@ import {
 } from "react-native";
 import FloatButton from "@components/Fab";
 import { fontFamily } from "@constants/typography";
-import { DragBtn, OptionsMenuBtn, MenuBtn } from "@constants/assets";
-import React, { useEffect, useState } from "react";
+import { OptionsMenuBtn, MenuBtn, Smile, Trash } from "@constants/assets";
+import React, { useEffect, useMemo, useState } from "react";
 import { ITask } from "src/types/Entities";
 import { supabase } from "@lib/supabase";
 import { useAuthStore } from "@store/authStore";
 import { CheckBox } from "@rneui/themed";
 import { router } from "expo-router";
+
+function CompletedTaskSection({
+  undo,
+  userId,
+}: {
+  undo: (taskId: string) => void;
+  userId: string | undefined;
+}) {
+  const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
+
+  async function getCompletedTasks() {
+    let { data: tasks, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("userId", userId)
+      .filter("done", "eq", true)
+      .select();
+
+    if (tasks) {
+      setCompletedTasks(tasks);
+    } else {
+      console.error(error);
+    }
+  }
+
+  async function deleteTask(taskId: string) {
+    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+
+    if (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getCompletedTasks();
+  }, [completedTasks]);
+
+  if (completedTasks.length === 0) {
+    return null;
+  }
+
+  return (
+    <View
+      style={{
+        marginTop: -300,
+        marginLeft: 20,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: fontFamily.semiBold,
+          fontSize: 16,
+          marginBottom: 20,
+        }}
+      >
+        Completed
+      </Text>
+      <ScrollView>
+        {completedTasks.map((task, index) => (
+          <TouchableOpacity
+            style={styles.taskContainer}
+            key={task.id}
+            disabled={true}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 20,
+              }}
+            >
+              <CheckBox
+                textStyle={styles.taskLabel}
+                checked={task.done}
+                onPress={() => undo(task.id)}
+                title={task.label}
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                marginRight: 5,
+              }}
+              onPress={() => deleteTask(task.id)}
+            >
+              <Trash />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
 
 export default function Home() {
   const [visible, setVisible] = React.useState(false);
@@ -30,7 +124,9 @@ export default function Home() {
     let { data: tasks, error } = await supabase
       .from("tasks")
       .select("*")
-      .eq("userId", session?.user.id);
+      .eq("userId", session?.user.id)
+      .filter("done", "eq", false)
+      .select();
 
     if (tasks) {
       setTasksData(tasks);
@@ -40,14 +136,22 @@ export default function Home() {
   }
 
   async function setTaskDone(taskId: string) {
-    const { data, error } = await supabase
+    setChecked(!checked);
+    const { data: tasks, error } = await supabase
       .from("tasks")
-      .update({ done: true })
-      .eq("id", taskId)
-      .select();
+      .update({ done: !checked })
+      .eq("id", taskId);
 
-    if (data) {
-      console.log(data);
+    if (error) {
+      console.log(error);
+    }
+  }
+
+  async function deleteTask(taskId: string) {
+    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+
+    if (error) {
+      console.error(error);
     }
   }
 
@@ -76,37 +180,67 @@ export default function Home() {
         </View>
       </View>
       <ScrollView style={styles.tasksList}>
-        {tasksData.map((task) => (
-          <TouchableOpacity
-            style={styles.taskContainer}
-            key={task.id}
-            onPress={() =>
-              router.push({
-                pathname: "/(protected)/(task_details)/task_details",
-                params: { taskId: task.id },
-              })
-            }
+        {tasksData.length > 0 ? (
+          <>
+            {tasksData.map((task) => (
+              <TouchableOpacity
+                style={styles.taskContainer}
+                key={task.id}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(protected)/(task_details)/task_details",
+                    params: { taskId: task.id },
+                  })
+                }
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 20,
+                  }}
+                >
+                  <CheckBox
+                    textStyle={styles.taskLabel}
+                    checked={task.done}
+                    onPress={() => setTaskDone(task.id)}
+                    title={task.label}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={{
+                    marginRight: 5,
+                  }}
+                  onPress={() => deleteTask(task.id)}
+                >
+                  <Trash />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
+          </>
+        ) : (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flex: 1,
+              marginTop: 50,
+            }}
           >
-            <View
+            <Smile />
+            <Text
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 20,
+                fontFamily: fontFamily.semiBold,
+                fontSize: 16,
+                marginTop: 10,
               }}
             >
-              <CheckBox
-                textStyle={styles.taskLabel}
-                checked={checked}
-                onPress={() => setTaskDone(task.id)}
-                title={task.label}
-              />
-            </View>
-            <TouchableOpacity>
-              <OptionsMenuBtn />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
+              Nice Job, Proud of you!
+            </Text>
+          </View>
+        )}
       </ScrollView>
+      <CompletedTaskSection userId={session?.user.id} undo={setTaskDone} />
     </View>
   );
 }
