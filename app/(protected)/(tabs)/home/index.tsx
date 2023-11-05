@@ -18,6 +18,7 @@ import { supabase } from "@lib/supabase";
 import { useAuthStore } from "@store/authStore";
 import { CheckBox } from "@rneui/themed";
 import { router } from "expo-router";
+import { Button, Drawer, Menu } from "react-native-paper";
 
 function CompletedTaskSection({
   undo,
@@ -116,9 +117,22 @@ export default function Home() {
   const [tasksData, setTasksData] = useState<ITask[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const session = useAuthStore((v) => v.session);
+  const [visibleMenu, setVisibleMenu] = React.useState(false);
+  const [selectedTaskId, setSelectedTaskId] = React.useState<string | null>(
+    null
+  );
+  const [active, setActive] = React.useState("");
 
+  const openMenu = (taskId: string) => {
+    setVisibleMenu(true);
+    setSelectedTaskId(taskId);
+  };
+
+  const closeMenu = () => {
+    setVisibleMenu(false);
+    setSelectedTaskId(null);
+  };
   const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
 
   async function getTasks() {
     let { data: tasks, error } = await supabase
@@ -164,9 +178,9 @@ export default function Home() {
       <FloatButton showModal={showModal} />
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <MenuBtn />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Text
             style={{
               color: "#000",
@@ -183,16 +197,7 @@ export default function Home() {
         {tasksData.length > 0 ? (
           <>
             {tasksData.map((task) => (
-              <TouchableOpacity
-                style={styles.taskContainer}
-                key={task.id}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(protected)/(task_details)/task_details",
-                    params: { taskId: task.id },
-                  })
-                }
-              >
+              <TouchableOpacity style={styles.taskContainer} key={task.id}>
                 <View
                   style={{
                     flexDirection: "row",
@@ -207,14 +212,42 @@ export default function Home() {
                     title={task.label}
                   />
                 </View>
-                <TouchableOpacity
+                <Menu
+                  visible={visibleMenu && selectedTaskId === task.id}
+                  onDismiss={closeMenu}
+                  key={task.id}
                   style={{
-                    marginRight: 5,
+                    backgroundColor: "#fff",
                   }}
-                  onPress={() => deleteTask(task.id)}
+                  contentStyle={{
+                    backgroundColor: "#fff",
+                  }}
+                  anchor={
+                    <TouchableOpacity onPress={() => openMenu(task.id)}>
+                      <OptionsMenuBtn />
+                    </TouchableOpacity>
+                  }
                 >
-                  <Trash />
-                </TouchableOpacity>
+                  <Menu.Item
+                    onPress={() => {
+                      router.push({
+                        pathname: "/(protected)/(task_details)/task_details",
+                        params: { taskId: task.id },
+                      });
+                    }}
+                    title="See details"
+                  />
+                  <Menu.Item
+                    onPress={() => {
+                      deleteTask(task.id);
+                    }}
+                    title="Delete"
+                    leadingIcon="delete"
+                    titleStyle={{
+                      color: "red",
+                    }}
+                  />
+                </Menu>
               </TouchableOpacity>
             ))}
           </>

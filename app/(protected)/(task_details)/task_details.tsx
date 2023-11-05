@@ -22,7 +22,7 @@ import {
 } from "react-native-popup-menu";
 import { priorities } from "@constants/data";
 import { Button } from "@rneui/themed";
-import Toast, { SuccessToast } from "react-native-toast-message";
+import { SuccessToast } from "react-native-toast-message";
 
 interface SelectedTaskType {
   label: string;
