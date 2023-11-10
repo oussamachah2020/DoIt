@@ -13,6 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#F5F5F5"
     },
+    "packagerOpts": {
+      "sourceExts": ["cjs"]
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -25,6 +28,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#F5F5F5"
+      },
+      "extra":  {
+        "eas": {
+          "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"
+        }
       }
     },
     "web": {
@@ -38,6 +46,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"
+      }
     }
   }
 }

@@ -11,17 +11,31 @@ import {
 } from "@constants/assets";
 import { BottomModal } from "@components/BottomModal";
 import React, { useEffect } from "react";
-import Toast, {
-  BaseToast,
-  BaseToastProps,
-  ErrorToast,
-  SuccessToast,
-} from "react-native-toast-message";
+import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
 import { useAuthStore } from "@store/authStore";
 import { supabase } from "@lib/supabase";
+import { db } from "../../../firebase";
+import { onValue, push, ref, set } from "firebase/database";
 
+import { useMemo, useRef, useState } from "react";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { Platform, StatusBar } from "react-native";
+import { MenuProvider } from "react-native-popup-menu";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 export default function AppLayout() {
   const session = useAuthStore((v) => v.session);
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const toastConfig = {
     /*
@@ -97,11 +111,57 @@ export default function AppLayout() {
   };
 
   useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  async function save_push_token() {
+    try {
+      if (expoPushToken) {
+        const { error } = await supabase
+          .from("tokens")
+          .insert([{ user_id: session?.user.id, push_token: expoPushToken }]);
+
+        if (error) {
+          console.error(error);
+        } else {
+          console.log("push token saved");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    save_push_token();
+  }, [expoPushToken]);
+
+  useEffect(() => {
     saveProfileInfo();
   }, [session?.user.id]);
 
   return (
-    <>
+    <MenuProvider>
+      <StatusBar barStyle={"dark-content"} />
       <Toast config={toastConfig} />
 
       <BottomModal />
@@ -186,6 +246,59 @@ export default function AppLayout() {
           />
         </Tabs>
       </PaperProvider>
-    </>
+    </MenuProvider>
   );
+}
+
+// async function schedulePushNotification() {
+//   await Notifications.scheduleNotificationAsync({
+//     content: {
+//       title: "You've got mail! 📬",
+//       body: "Here is the notification body",
+//       data: { data: "goes here" },
+//     },
+//     trigger: { seconds: 2 },
+//   });
+// }
+
+async function registerForPushNotificationsAsync() {
+  try {
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+    let token;
+
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      // Learn more about projectId:
+      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+      token = (
+        await Notifications.getExpoPushTokenAsync({
+          projectId: "73c7643b-2093-4ca4-899d-c2c0139c0f92",
+        })
+      ).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    return token;
+  } catch (error) {
+    console.error(error);
+  }
 }

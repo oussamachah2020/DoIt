@@ -10,6 +10,7 @@
       "@constants/*": ["src/constants/*"],
       "@store/*": ["src/zustand/*"],
       "@utils/*": ["src/utils/*"],
+      "@Firebase": ["src/Firebase/*"],
     },
     "typeRoots": ["src/types"]
   },

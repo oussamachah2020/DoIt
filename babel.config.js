@@ -17,6 +17,7 @@ module.exports = function (api) {
             "@assets": "./assets",
             "@store": "./src/zustand",
             "@utils": "./src/utils",
+            "@Firebase": "./src/Firebase",
           },
         },
       ],
