@@ -14,10 +14,8 @@ import React, { useEffect } from "react";
 import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
 import { useAuthStore } from "@store/authStore";
 import { supabase } from "@lib/supabase";
-import { db } from "../../../firebase";
-import { onValue, push, ref, set } from "firebase/database";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform, StatusBar } from "react-native";
@@ -151,12 +149,48 @@ export default function AppLayout() {
     }
   }
 
+  function sendNotifReminder() {
+    fetch("https://doti-notifications.onrender.com/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: session?.user.id,
+        title: "Daily Reminder",
+        content: "Don't forget today's tasks",
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.error(err));
+  }
+
   useEffect(() => {
     save_push_token();
   }, [expoPushToken]);
 
   useEffect(() => {
     saveProfileInfo();
+  }, [session?.user.id]);
+
+  useEffect(() => {
+    // Set up an interval to fire the fetch request once per day (in milliseconds)
+    const interval = 24 * 60 * 60 * 1000; // 24 hours
+
+    // Initial trigger when the component mounts
+    sendNotifReminder();
+
+    // Set up the interval to trigger the function once per day
+    const intervalId = setInterval(() => {
+      sendNotifReminder();
+    }, interval);
+
+    // Clear the interval when the component unmounts to prevent memory leaks
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [session?.user.id]);
 
   return (

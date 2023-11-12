@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BottomSheet } from "@rneui/themed";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { List, TextInput } from "react-native-paper";
@@ -27,6 +27,10 @@ export const BottomModal = () => {
   const [selectedDate, setSelectedDate] = React.useState(
     formatDate(new Date())
   );
+
+  useEffect(() => {
+    console.log(selectedDate);
+  }, [selectedDate]);
 
   const showModal = () => setOpenCalendarModal(true);
 

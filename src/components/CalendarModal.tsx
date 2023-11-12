@@ -36,7 +36,8 @@ const CalendarModal = ({ selected, setSelected }: Props) => {
       <Calendar
         onDayPress={(day) => {
           setSelected(day.dateString);
-          setOpenCalendarModal(false);
+          // setOpenCalendarModal(false);
+          console.log(day);
         }}
         initialDate={formatDate(new Date())}
         markedDates={{
