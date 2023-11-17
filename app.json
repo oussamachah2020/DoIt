@@ -7,24 +7,27 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "backgroundColor": "#F5F5F5",    
+    "backgroundColor": "#F5F5F5",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#fffff"
     },
-    "notification":{
-      "icon":"./assets/images/notification-icon.png",
-      "color": "#002C56" 
-   },
+    "notification": {
+      "icon": "./assets/images/notification-icon.png",
+      "color": "#002C56"
+    },
     "packagerOpts": {
-      "sourceExts": ["cjs"]
+      "sourceExts": [
+        "cjs"
+      ]
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.todo.app"
     },
     "android": {
       "package": "com.todo.app",
@@ -33,7 +36,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#F5F5F5"
       },
-      "extra":  {
+      "extra": {
         "eas": {
           "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"
         }
@@ -50,7 +53,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
-          "color": "#002C56"         
+          "color": "#002C56"
         }
       ]
     ],
