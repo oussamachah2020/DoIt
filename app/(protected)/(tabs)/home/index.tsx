@@ -1,24 +1,22 @@
 import {
   Dimensions,
-  Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   View,
 } from "react-native";
 import FloatButton from "@components/Fab";
 import { fontFamily } from "@constants/typography";
-import { OptionsMenuBtn, MenuBtn, Smile, Trash } from "@constants/assets";
-import React, { useEffect, useMemo, useState } from "react";
+import { OptionsMenuBtn, Smile, Trash } from "@constants/assets";
+import React, { useEffect, useState } from "react";
 import { ITask } from "src/types/Entities";
 import { supabase } from "@lib/supabase";
 import { useAuthStore } from "@store/authStore";
 import { CheckBox } from "@rneui/themed";
 import { router } from "expo-router";
-import { Button, Drawer, Menu } from "react-native-paper";
+import { Menu } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 function CompletedTaskSection({
   undo,
@@ -45,9 +43,19 @@ function CompletedTaskSection({
   }
 
   async function deleteTask(taskId: string) {
-    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+    try {
+      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
-    if (error) {
+      Toast.show({
+        type: "success",
+        text1: "TASK",
+        text2: "Task Deleted successfully !",
+      });
+
+      if (error) {
+        console.error(error);
+      }
+    } catch (error) {
       console.error(error);
     }
   }
@@ -121,8 +129,6 @@ export default function Home() {
   const [selectedTaskId, setSelectedTaskId] = React.useState<string | null>(
     null
   );
-  const [active, setActive] = React.useState("");
-
   const openMenu = (taskId: string) => {
     setVisibleMenu(true);
     setSelectedTaskId(taskId);
@@ -178,9 +184,6 @@ export default function Home() {
       <FloatButton showModal={showModal} />
       <View style={styles.container}>
         <View style={styles.header}>
-          {/* <TouchableOpacity>
-            <MenuBtn />
-          </TouchableOpacity> */}
           <Text
             style={{
               color: "#000",
@@ -235,6 +238,10 @@ export default function Home() {
                         params: { taskId: task.id },
                       });
                     }}
+                    titleStyle={{
+                      color: "#000",
+                    }}
+                    leadingIcon="text"
                     title="See details"
                   />
                   <Menu.Item

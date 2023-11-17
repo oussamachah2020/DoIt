@@ -12,7 +12,7 @@ import { supabase } from "@lib/supabase";
 import { formatDate } from "@utils/dateFormatter";
 
 import { useAuthStore } from "@store/authStore";
-import Toast from "react-native-toast-message";
+import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
 import CalendarModal from "./CalendarModal";
 import { priorities } from "@constants/data";
 
@@ -56,9 +56,9 @@ export const BottomModal = () => {
         setTask("");
         setOpenTaskForm(false);
         Toast.show({
-          type: "success",
           text1: "Good job!",
           text2: "Task created successfully !",
+          type: "success",
         });
       } else {
         Toast.show({
@@ -104,6 +104,9 @@ export const BottomModal = () => {
             {priorities.map((priority) => (
               <List.Item
                 key={priority.id}
+                titleStyle={{
+                  color: "#000",
+                }}
                 title={priority.label}
                 left={(props) => (
                   <List.Icon
@@ -133,6 +136,7 @@ export const BottomModal = () => {
                 backgroundColor: "#F5F5F5",
                 width: "100%",
                 position: "relative",
+                color: "#000",
               }}
               style={{
                 color: "#000",

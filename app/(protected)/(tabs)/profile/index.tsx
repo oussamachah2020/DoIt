@@ -6,6 +6,7 @@ import { Avatar } from "@rneui/themed";
 import { useAuthStore } from "@store/authStore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Constants from "expo-constants";
 
 function profile() {
   const { setSession, session } = useAuthStore();
@@ -68,7 +69,7 @@ function profile() {
       </View>
       <TouchableOpacity
         style={{
-          marginTop: 100,
+          marginTop: 50,
           justifyContent: "center",
           alignItems: "center",
           height: 42,
@@ -85,6 +86,14 @@ function profile() {
           Logout
         </Text>
       </TouchableOpacity>
+      <Text
+        style={{
+          fontFamily: fontFamily.semiBold,
+          marginTop: 300,
+        }}
+      >
+        V {Constants.expoConfig?.version}
+      </Text>
     </View>
   );
 }
@@ -97,7 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   username: {
     fontFamily: fontFamily.semiBold,
     fontSize: 16,

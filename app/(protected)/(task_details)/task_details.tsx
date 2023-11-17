@@ -11,18 +11,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { TextInput } from "react-native-paper";
+import { Icon, TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CalendarModal from "@components/CalendarModal";
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from "react-native-popup-menu";
+
 import { priorities } from "@constants/data";
 import { Button } from "@rneui/themed";
-import { SuccessToast } from "react-native-toast-message";
+import Toast, { SuccessToast } from "react-native-toast-message";
+import { OptionsMenuBtn } from "@constants/assets";
+import { Menu } from "react-native-paper";
+import { setPriority } from "firebase/database";
 
 interface SelectedTaskType {
   label: string;
@@ -43,6 +41,15 @@ export default function TaskDetails() {
   const { setOpenCalendarModal } = useTaskStore();
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visibleMenu, setVisibleMenu] = useState(false);
+
+  const openMenu = (taskId: string) => {
+    setVisibleMenu(true);
+  };
+
+  const closeMenu = () => {
+    setVisibleMenu(false);
+  };
 
   const getTaskDetailsWithId = async () => {
     setLoading(true);
@@ -76,11 +83,14 @@ export default function TaskDetails() {
           updated_at: new Date(),
         })
         .eq("id", taskId);
-
-      SuccessToast({
+      Toast.show({
         text1: "Good job!",
-        text2: "Task created successfully !",
+        text2: "Task updated successfully !",
+        type: "success",
       });
+      // SuccessToast({
+
+      // });
 
       setTimeout(() => {
         router.push("/(protected)/(tabs)/home");
@@ -131,11 +141,16 @@ export default function TaskDetails() {
         <TextInput
           value={task?.label}
           onChangeText={(text) => setTask({ ...task, label: text })}
+          // contentStyle={{
+          // }}
           contentStyle={{
             backgroundColor: "#F5F5F5",
+            color: "#000",
+            borderWidth: 1,
+            borderColor: "#e7e7e7",
           }}
           style={{
-            width: "90%",
+            width: "95%",
             marginTop: 20,
             color: "#000",
             fontFamily: fontFamily.Medium,
@@ -159,47 +174,40 @@ export default function TaskDetails() {
               {selectedDate}
             </Text>
           </TouchableOpacity>
+
           <Menu
+            visible={visibleMenu}
+            onDismiss={closeMenu}
             style={{
-              width: "40%",
-              marginTop: 42,
-              borderBottomWidth: 1,
-              paddingBottom: 10,
+              backgroundColor: "#fff",
             }}
+            contentStyle={{
+              backgroundColor: "#fff",
+            }}
+            anchor={
+              <TouchableOpacity onPress={() => setVisibleMenu(true)}>
+                <Text style={styles.priorityBtn}>
+                  <Ionicons name="flag" size={20} color={"#b1b1b1"} />
+                  {"  "}
+                  {task.priority}
+                </Text>
+              </TouchableOpacity>
+            }
           >
-            <MenuTrigger text={task.priority} />
-            <MenuOptions
-              optionsContainerStyle={{
-                padding: 5,
-              }}
-            >
-              {priorities.map((priority) => (
-                <MenuOption
-                  key={priority.id}
-                  onSelect={() =>
-                    setTask({ ...task, priority: priority.value })
-                  }
-                  style={{
-                    padding: 10,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: fontFamily.regular,
-                      fontSize: 14,
-                    }}
-                  >
-                    <Ionicons
-                      name="flag"
-                      size={20}
-                      color={priority.iconColor}
-                    />
-                    {"  "}
-                    {priority.label}
-                  </Text>
-                </MenuOption>
-              ))}
-            </MenuOptions>
+            {priorities.map((priority, index) => (
+              <Menu.Item
+                key={index}
+                onPress={() => {
+                  setTask({ ...task, priority: priority.value });
+                  setVisibleMenu(false);
+                }}
+                title={priority.value}
+                leadingIcon="flag"
+                titleStyle={{
+                  color: priority.iconColor,
+                }}
+              />
+            ))}
           </Menu>
         </View>
         <View
@@ -270,9 +278,9 @@ const styles = StyleSheet.create({
   },
 
   priorityBtn: {
-    marginTop: 40,
+    marginTop: 44,
     borderBottomWidth: 1,
-    width: "40%",
+    width: 150,
     paddingBottom: 5,
     paddingLeft: 5,
   },

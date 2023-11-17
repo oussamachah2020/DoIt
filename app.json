@@ -4,8 +4,8 @@
     "slug": "todo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "icon": "./assets/images/notification-icon.png",
+    "scheme": "com.supabase",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#F5F5F5",
     "splash": {
@@ -32,10 +32,7 @@
     "android": {
       "package": "com.todo.app",
       "googleServicesFile": "./google-services.json",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#F5F5F5"
-      },
+   
       "extra": {
         "eas": {
           "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"

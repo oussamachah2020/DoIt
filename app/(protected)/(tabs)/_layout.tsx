@@ -35,45 +35,6 @@ export default function AppLayout() {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  const toastConfig = {
-    /*
-      Overwrite 'success' type,
-      by modifying the existing `BaseToast` component
-    */
-    success: (props: any) => (
-      <SuccessToast
-        {...props}
-        style={{ borderLeftColor: "#59CE8F" }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 16,
-          fontFamily: fontFamily.Medium,
-        }}
-        text2Style={{
-          fontSize: 14,
-          color: "rgba(0,0,0,0.5)",
-          fontFamily: fontFamily.regular,
-        }}
-      />
-    ),
-    /*
-      Overwrite 'error' type,
-      by modifying the existing `ErrorToast` component
-    */
-    error: (props: any) => (
-      <ErrorToast
-        {...props}
-        text1Style={{
-          fontSize: 17,
-          fontFamily: fontFamily.Medium,
-        }}
-        text2Style={{
-          fontSize: 15,
-        }}
-      />
-    ),
-  };
-
   const saveProfileInfo = async () => {
     if (session?.user.id) {
       // Check if a profile with the same userId exists
@@ -194,9 +155,8 @@ export default function AppLayout() {
   }, [session?.user.id]);
 
   return (
-    <MenuProvider>
+    <React.Fragment>
       <StatusBar barStyle={"dark-content"} />
-      <Toast config={toastConfig} />
 
       <BottomModal />
       <PaperProvider>
@@ -280,7 +240,7 @@ export default function AppLayout() {
           />
         </Tabs>
       </PaperProvider>
-    </MenuProvider>
+    </React.Fragment>
   );
 }
 
