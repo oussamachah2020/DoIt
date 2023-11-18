@@ -78,8 +78,8 @@ function profile() {
           borderRadius: 10,
         }}
         onPress={() => {
-          setSession(null);
           AsyncStorage.clear();
+          setSession(null);
         }}
       >
         <Text style={{ color: "#fff", fontFamily: fontFamily.semiBold }}>

@@ -30,20 +30,18 @@ export default function SignIn() {
 
   async function Login() {
     setLoading(true);
-    await supabase.auth
-      .signInWithPassword({
-        email: email,
-        password: password,
-      })
-      .then((data) => {
-        setIsAuth(true);
-        setSession(data?.data?.session);
-        storeData(data.data.session as Session);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
-      .catch((err) => Alert.alert(err.message));
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (data) {
+      setIsAuth(true);
+      setSession(data?.session);
+      storeData(data.session as Session);
+    } else {
+      console.error(error);
+    }
   }
 
   return (
