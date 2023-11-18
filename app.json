@@ -32,7 +32,6 @@
     "android": {
       "package": "com.todo.app",
       "googleServicesFile": "./google-services.json",
-   
       "extra": {
         "eas": {
           "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"
@@ -64,6 +63,12 @@
       "eas": {
         "projectId": "73c7643b-2093-4ca4-899d-c2c0139c0f92"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/73c7643b-2093-4ca4-899d-c2c0139c0f92"
     }
   }
 }
