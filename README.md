@@ -1,4 +1,4 @@
-![logo](https://github.com/oussamachah2020/DoIt/assets/72669865/6c68617e-5e10-4c58-93c5-e24da2e7ee41)
+![logo](https://github.com/oussamachah2020/DoIt/assets/72669865/927a2341-1b05-4416-badb-1dda85297ecb)
 
 # DO IT
 Simple yet beautiful todo mobile app for android and ios.
