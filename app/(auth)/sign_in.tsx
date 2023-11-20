@@ -8,13 +8,14 @@ import { supabase } from "@lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useAuthStore } from "../../src/zustand/authStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisile] = useState(true);
-
+  const [showError, setShowError] = useState(false);
   const togglePasswordVisibility = () => {
     setVisile(!visible);
   };
@@ -30,6 +31,18 @@ export default function SignIn() {
 
   async function Login() {
     setLoading(true);
+
+    if (email === "" || password === "") {
+      Toast.show({
+        type: "error",
+        text1: "Auth Error",
+        text2: "Please enter your credentials",
+      });
+      setShowError(true);
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -95,6 +108,17 @@ export default function SignIn() {
         >
           {loading === true ? "" : "Login"}
         </Button>
+        {showError ? (
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: fontFamily.semiBold,
+              color: "red",
+            }}
+          >
+            Please Enter your credentials !
+          </Text>
+        ) : null}
         <Text style={style.SignInLink}>
           Don't have an account ?{" "}
           <Link

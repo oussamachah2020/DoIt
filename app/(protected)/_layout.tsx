@@ -83,14 +83,13 @@ export default function AppLayout() {
     return null;
   }
 
-  if (session || isAuth === true) {
-    return (
-      <Provider>
-        <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-        <Toast config={toastConfig} />
-      </Provider>
-    );
-  } else {
+  if (!session) {
     return <SignIn />;
   }
+  return (
+    <Provider>
+      <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+      <Toast config={toastConfig} />
+    </Provider>
+  );
 }

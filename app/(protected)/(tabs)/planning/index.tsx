@@ -57,7 +57,11 @@ export default function planning() {
   }) => {
     return (
       <TouchableOpacity style={styles.item}>
-        <Card>
+        <Card
+          style={{
+            backgroundColor: "#fff",
+          }}
+        >
           <Card.Content>
             <View>
               <Text>{item.name}</Text>
