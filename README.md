@@ -41,7 +41,8 @@ then scan the QR code using expo go app
 Scan the QR code: 
 
 ### for Android
-![android](https://github.com/oussamachah2020/DoIt/assets/72669865/31ea600f-e074-47de-955f-c6d333702013)
+![android](https://github.com/oussamachah2020/DoIt/assets/72669865/fb26bb4b-1aa6-451d-a84a-181dd13809f5)
 
 ### for IOS
-![ios](https://github.com/oussamachah2020/DoIt/assets/72669865/f62e4b55-ab1e-484f-b6c2-68d845d5838d)
+![ios](https://github.com/oussamachah2020/DoIt/assets/72669865/628d3f17-2a33-418c-a59c-4809dd6dc575)
+
