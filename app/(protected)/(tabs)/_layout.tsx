@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { fontFamily } from "@constants/typography";
 import { PaperProvider } from "react-native-paper";
 import {
@@ -20,6 +20,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform, StatusBar } from "react-native";
 import { MenuProvider } from "react-native-popup-menu";
+import FloatButton from "@components/Fab";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -34,7 +35,8 @@ export default function AppLayout() {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-
+  const [visible, setVisible] = React.useState(false);
+  const showModal = () => setVisible(true);
   const saveProfileInfo = async () => {
     if (session?.user.id) {
       // Check if a profile with the same userId exists
@@ -157,6 +159,7 @@ export default function AppLayout() {
   return (
     <React.Fragment>
       <StatusBar barStyle={"dark-content"} />
+      <FloatButton showModal={showModal} />
 
       <BottomModal />
       <PaperProvider>

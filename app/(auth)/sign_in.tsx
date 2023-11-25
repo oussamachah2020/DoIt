@@ -8,7 +8,8 @@ import { supabase } from "@lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useAuthStore } from "../../src/zustand/authStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
+import { login } from "@loaders/auth";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function SignIn() {
   const togglePasswordVisibility = () => {
     setVisile(!visible);
   };
-  const { setSession, setIsAuth, session } = useAuthStore();
+  const { setSession, setIsAuth } = useAuthStore();
 
   const storeData = async (session: Session) => {
     try {
@@ -32,30 +33,31 @@ export default function SignIn() {
   async function Login() {
     setLoading(true);
 
-    if (email === "" || password === "") {
-      Toast.show({
-        type: "error",
-        text1: "Auth Error",
-        text2: "Please enter your credentials",
+    login(email, password)
+      .then((session) => {
+        console.log("login session: ", session);
+        setIsAuth(true);
+        setSession(session);
+        storeData(session);
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Success",
+          textBody: "Logged In successfully !",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Error",
+          textBody: "Oops! Something went wrong, try again later !",
+        });
       });
-      setShowError(true);
-      setLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (data) {
-      setIsAuth(true);
-      setSession(data?.session);
-      storeData(data.session as Session);
-    } else {
-      console.error(error);
-    }
   }
+
+  // useEffect(() => {
+
+  // }, [isAuth])
 
   return (
     <View
@@ -105,6 +107,7 @@ export default function SignIn() {
           onPress={Login}
           style={style.button}
           loading={loading === true}
+          disabled={!email || !password || password.length < 8}
         >
           {loading === true ? "" : "Login"}
         </Button>

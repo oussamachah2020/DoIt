@@ -11,8 +11,10 @@ import Logo from "@assets/images/app_icons/logo.svg";
 import { fontFamily } from "@constants/typography";
 import { Button, TextInput } from "react-native-paper";
 import { useState } from "react";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { supabase } from "@lib/supabase";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import { createAccount } from "../../src/loaders/auth";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -24,21 +26,31 @@ export default function SignUp() {
     setVisile(!visible);
   };
 
-  async function signUpWithEmail() {
+  function signUpWithEmail() {
     setLoading(true);
-    await supabase.auth
-      .signUp({
-        email: email,
-        password: password,
+
+    createAccount(email, password)
+      .then(() => {
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Account created !",
+          textBody: `Verification code was sent to ${email}`,
+          button: "Verify Account",
+          onPressButton() {
+            router.push({
+              pathname: "/(auth)/email_verification",
+              params: { email },
+            });
+            this.autoClose = true;
+          },
+        });
       })
-      .then((data) => {
-        console.log(data);
-        Alert.alert(`A verification email was sent to ${email}`);
+      .catch((err) => {
+        console.error(err);
       })
       .finally(() => {
         setLoading(false);
-      })
-      .catch((err) => Alert.alert(err.message));
+      });
   }
 
   return (
@@ -87,6 +99,7 @@ export default function SignUp() {
           onPress={signUpWithEmail}
           style={style.button}
           loading={loading === true}
+          disabled={!email || !password || password.length < 8}
         >
           {loading === true ? "" : "Create Account"}
         </Button>

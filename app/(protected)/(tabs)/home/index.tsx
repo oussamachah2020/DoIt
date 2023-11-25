@@ -1,321 +1,92 @@
 import {
   Dimensions,
-  ScrollView,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
-import FloatButton from "@components/Fab";
 import { fontFamily } from "@constants/typography";
-import { OptionsMenuBtn, Smile, Trash } from "@constants/assets";
-import React, { useEffect, useState } from "react";
-import { ITask } from "src/types/Entities";
-import { supabase } from "@lib/supabase";
-import { useAuthStore } from "@store/authStore";
-import { CheckBox } from "@rneui/themed";
+import React from "react";
+import { UndoneTasks } from "@components/UndoneTasks";
+import { FinishedTasks } from "@components/FinishedTasks";
+import { TabView, SceneMap } from "react-native-tab-view";
 import { router } from "expo-router";
-import { Menu } from "react-native-paper";
-import Toast from "react-native-toast-message";
 
-function CompletedTaskSection({
-  undo,
-  userId,
+const FirstRoute = () => <UndoneTasks />;
+
+const SecondRoute = () => <FinishedTasks />;
+
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+});
+
+const CustomTabBar = ({
+  navigationState,
+  navigation,
 }: {
-  undo: (taskId: string) => void;
-  userId: string | undefined;
-}) {
-  const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
-
-  async function getCompletedTasks() {
-    let { data: tasks, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq("userId", userId)
-      .filter("done", "eq", true)
-      .select();
-
-    if (tasks) {
-      setCompletedTasks(tasks);
-    } else {
-      console.error(error);
-    }
-  }
-
-  async function deleteTask(taskId: string) {
-    try {
-      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-
-      Toast.show({
-        type: "success",
-        text1: "TASK",
-        text2: "Task Deleted successfully !",
-      });
-
-      if (error) {
-        console.error(error);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    getCompletedTasks();
-  }, [completedTasks]);
-
-  if (completedTasks.length === 0) {
-    return null;
-  }
+  navigationState: any;
+  navigation: any;
+}) => {
+  const { routes } = navigationState;
 
   return (
     <View
       style={{
-        marginTop: -300,
-        marginLeft: 20,
+        flexDirection: "row",
+        backgroundColor: "#f2f2f2",
       }}
     >
-      <Text
-        style={{
-          fontFamily: fontFamily.semiBold,
-          fontSize: 16,
-          marginBottom: 20,
-        }}
-      >
-        Completed
-      </Text>
-      <ScrollView>
-        {completedTasks.map((task, index) => (
+      {routes.map((route: any, idx: number) => {
+        const isRouteActive = idx === navigationState.index;
+        return (
           <TouchableOpacity
-            style={styles.taskContainer}
-            key={task.id}
-            disabled={true}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 20,
-              }}
-            >
-              <CheckBox
-                textStyle={styles.taskLabel}
-                checked={task.done}
-                onPress={() => undo(task.id)}
-                title={task.label}
-              />
-            </View>
-            <TouchableOpacity
-              style={{
-                marginRight: 5,
-              }}
-              onPress={() => deleteTask(task.id)}
-            >
-              <Trash />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
-
-export default function Home() {
-  const [visible, setVisible] = React.useState(false);
-  const [tasksData, setTasksData] = useState<ITask[]>([]);
-  const [checked, setChecked] = useState<boolean>(false);
-  const session = useAuthStore((v) => v.session);
-  const [visibleMenu, setVisibleMenu] = React.useState(false);
-  const [selectedTaskId, setSelectedTaskId] = React.useState<string | null>(
-    null
-  );
-  const openMenu = (taskId: string) => {
-    setVisibleMenu(true);
-    setSelectedTaskId(taskId);
-  };
-
-  const closeMenu = () => {
-    setVisibleMenu(false);
-    setSelectedTaskId(null);
-  };
-  const showModal = () => setVisible(true);
-
-  async function getTasks() {
-    let { data: tasks, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq("userId", session?.user.id)
-      .filter("done", "eq", false)
-      .select();
-
-    if (tasks) {
-      setTasksData(tasks);
-    } else {
-      console.error(error);
-    }
-  }
-
-  async function setTaskDone(taskId: string) {
-    setChecked(!checked);
-    const { data: tasks, error } = await supabase
-      .from("tasks")
-      .update({ done: !checked })
-      .eq("id", taskId);
-
-    if (error) {
-      console.log(error);
-    }
-  }
-
-  async function deleteTask(taskId: string) {
-    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-
-    if (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    getTasks();
-  }, [tasksData]);
-
-  return (
-    <View>
-      <FloatButton showModal={showModal} />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text
+            key={idx}
+            // onPress={() => router.push(route.key)}
             style={{
-              color: "#000",
-              fontFamily: fontFamily.semiBold,
-              fontSize: 18,
-              marginTop: 5,
-            }}
-          >
-            Tasks
-          </Text>
-        </View>
-      </View>
-      <ScrollView style={styles.tasksList}>
-        {tasksData.length > 0 ? (
-          <>
-            {tasksData.map((task) => (
-              <TouchableOpacity style={styles.taskContainer} key={task.id}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 20,
-                  }}
-                >
-                  <CheckBox
-                    textStyle={styles.taskLabel}
-                    checked={task.done}
-                    onPress={() => setTaskDone(task.id)}
-                    title={task.label}
-                  />
-                </View>
-                <Menu
-                  visible={visibleMenu && selectedTaskId === task.id}
-                  onDismiss={closeMenu}
-                  key={task.id}
-                  style={{
-                    backgroundColor: "#fff",
-                  }}
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  anchor={
-                    <TouchableOpacity onPress={() => openMenu(task.id)}>
-                      <OptionsMenuBtn />
-                    </TouchableOpacity>
-                  }
-                >
-                  <Menu.Item
-                    onPress={() => {
-                      router.push({
-                        pathname: "/(protected)/(task_details)/task_details",
-                        params: { taskId: task.id },
-                      });
-                    }}
-                    titleStyle={{
-                      color: "#000",
-                    }}
-                    leadingIcon="text"
-                    title="See details"
-                  />
-                  <Menu.Item
-                    onPress={() => {
-                      deleteTask(task.id);
-                    }}
-                    title="Delete"
-                    leadingIcon="delete"
-                    titleStyle={{
-                      color: "red",
-                    }}
-                  />
-                </Menu>
-              </TouchableOpacity>
-            ))}
-          </>
-        ) : (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
               flex: 1,
-              marginTop: 50,
+              alignItems: "center",
+              paddingVertical: 12,
+              borderBottomWidth: isRouteActive ? 4 : 0, // Change borderBottomWidth based on active/inactive state
+              borderBottomColor: isRouteActive ? "#2F89FC" : "transparent", // Change borderBottomColor based on active/inactive state
             }}
           >
-            <Smile />
             <Text
               style={{
-                fontFamily: fontFamily.semiBold,
-                fontSize: 16,
-                marginTop: 10,
+                color: isRouteActive ? "#2F89FC" : "black",
+                fontFamily: fontFamily.Medium,
               }}
             >
-              Nice Job, Proud of you!
+              {route.title}
             </Text>
-          </View>
-        )}
-      </ScrollView>
-      <CompletedTaskSection userId={session?.user.id} undo={setTaskDone} />
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 50,
-    marginLeft: 20,
-  },
-  header: {
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 17,
-  },
-  taskLabel: {
-    color: "#000",
-    fontSize: 16,
-    fontFamily: fontFamily.regular,
-    // marginTop: 3,
-  },
-  tasksList: {
-    marginTop: 20,
-    height: Dimensions.get("screen").height - 230,
-    marginLeft: 20,
-  },
-  taskContainer: {
-    backgroundColor: "#fff",
-    elevation: 5,
-    width: "95%",
-    height: 52,
-    marginBottom: 28,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 6,
-  },
-});
+export default function Home() {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "first", title: "In Progress" },
+    { key: "second", title: "Finished" },
+  ]);
+
+  return (
+    <TabView
+      style={{
+        marginTop: Platform.OS === "android" ? 40 : 50,
+      }}
+      navigationState={{ index, routes }}
+      renderTabBar={CustomTabBar}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width, height: layout.height }}
+    />
+  );
+}

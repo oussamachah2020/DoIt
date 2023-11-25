@@ -18,6 +18,7 @@ module.exports = function (api) {
             "@store": "./src/zustand",
             "@utils": "./src/utils",
             "@Firebase": "./src/Firebase",
+            "@loaders": "./src/loaders",
           },
         },
       ],

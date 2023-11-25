@@ -8,13 +8,13 @@ import SendBtn from "@assets/images/icons_svg/send.svg";
 import Flag from "@assets/images/icons_svg/flag.svg";
 import CalendarIcon from "@assets/images/icons_svg/calendar2.svg";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { supabase } from "@lib/supabase";
 import { formatDate } from "@utils/dateFormatter";
 
 import { useAuthStore } from "@store/authStore";
-import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
 import CalendarModal from "./CalendarModal";
 import { priorities } from "@constants/data";
+import { createTask } from "@loaders/tasks";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export const BottomModal = () => {
   const { openTaskForm, setOpenTaskForm, setOpenCalendarModal } =
@@ -39,38 +39,24 @@ export const BottomModal = () => {
   };
 
   const createNewTask = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("tasks")
-        .insert([
-          {
-            label: task,
-            do_at: selectedDate,
-            priority,
-            userId: session?.user.id,
-          },
-        ])
-        .select();
-
-      if (data) {
+    createTask(task, selectedDate, priority, session?.user.id)
+      .then(() => {
         setTask("");
         setOpenTaskForm(false);
         Toast.show({
-          text1: "Good job!",
-          text2: "Task created successfully !",
-          type: "success",
+          type: ALERT_TYPE.SUCCESS,
+          title: "Success",
+          textBody: "Task created successfully !",
         });
-      } else {
+      })
+      .catch((err) => {
+        console.error(err);
         Toast.show({
-          type: "error",
-          text1: "OOPS !",
-          text2: error.message,
+          type: ALERT_TYPE.DANGER,
+          title: "Task Error",
+          textBody: "Something went wrong !",
         });
-        console.log(error);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+      });
   };
 
   return (

@@ -1,7 +1,7 @@
 import { useAuthStore } from "@store/authStore";
 import SignIn from "../(auth)/sign_in";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Redirect, SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-native-paper";
@@ -17,45 +17,6 @@ export default function AppLayout() {
   });
 
   const { isAuth, setSession, session } = useAuthStore();
-
-  const toastConfig = {
-    /*
-      Overwrite 'success' type,
-      by modifying the existing `BaseToast` component
-    */
-    success: (props: any) => (
-      <SuccessToast
-        {...props}
-        style={{ borderLeftColor: "#59CE8F" }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 16,
-          fontFamily: fontFamily.Medium,
-        }}
-        text2Style={{
-          fontSize: 14,
-          color: "rgba(0,0,0,0.5)",
-          fontFamily: fontFamily.regular,
-        }}
-      />
-    ),
-    /*
-      Overwrite 'error' type,
-      by modifying the existing `ErrorToast` component
-    */
-    error: (props: any) => (
-      <ErrorToast
-        {...props}
-        text1Style={{
-          fontSize: 17,
-          fontFamily: fontFamily.Medium,
-        }}
-        text2Style={{
-          fontSize: 15,
-        }}
-      />
-    ),
-  };
 
   const getData = async () => {
     try {
@@ -85,11 +46,11 @@ export default function AppLayout() {
 
   if (!session) {
     return <SignIn />;
+  } else {
+    return (
+      <Provider>
+        <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+      </Provider>
+    );
   }
-  return (
-    <Provider>
-      <Stack screenOptions={{ headerShown: false, animation: "none" }} />
-      <Toast config={toastConfig} />
-    </Provider>
-  );
 }
