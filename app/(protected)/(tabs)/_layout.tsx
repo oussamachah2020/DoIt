@@ -11,7 +11,6 @@ import {
 } from "@constants/assets";
 import { BottomModal } from "@components/BottomModal";
 import React, { useEffect } from "react";
-import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
 import { useAuthStore } from "@store/authStore";
 import { supabase } from "@lib/supabase";
 
@@ -19,7 +18,6 @@ import { useRef, useState } from "react";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform, StatusBar } from "react-native";
-import { MenuProvider } from "react-native-popup-menu";
 import FloatButton from "@components/Fab";
 
 Notifications.setNotificationHandler({
@@ -97,6 +95,7 @@ export default function AppLayout() {
   async function save_push_token() {
     try {
       if (expoPushToken) {
+        console.log("push_token: ", expoPushToken);
         const { error } = await supabase
           .from("tokens")
           .insert([{ user_id: session?.user.id, push_token: expoPushToken }]);
@@ -279,7 +278,7 @@ async function registerForPushNotificationsAsync() {
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
+        console.error("Failed to get push token for push notification!");
         return;
       }
       // Learn more about projectId:
@@ -291,7 +290,7 @@ async function registerForPushNotificationsAsync() {
       ).data;
       console.log(token);
     } else {
-      alert("Must use physical device for Push Notifications");
+      console.error("Must use physical device for Push Notifications");
     }
 
     return token;

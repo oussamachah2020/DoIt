@@ -49,8 +49,8 @@ const CustomTabBar = ({
               flex: 1,
               alignItems: "center",
               paddingVertical: 12,
-              borderBottomWidth: isRouteActive ? 4 : 0, // Change borderBottomWidth based on active/inactive state
-              borderBottomColor: isRouteActive ? "#2F89FC" : "transparent", // Change borderBottomColor based on active/inactive state
+              borderBottomWidth: isRouteActive ? 4 : 0,
+              borderBottomColor: isRouteActive ? "#2F89FC" : "transparent",
             }}
           >
             <Text

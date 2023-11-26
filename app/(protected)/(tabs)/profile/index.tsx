@@ -7,6 +7,7 @@ import { useAuthStore } from "@store/authStore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Constants from "expo-constants";
+import AvatarUploader from "@components/AvatarUploader";
 
 function profile() {
   const { setSession, session } = useAuthStore();
@@ -45,17 +46,20 @@ function profile() {
           alignItems: "center",
         }}
       >
-        <Avatar
-          size={50}
-          rounded
-          title={profileData.fullName.charAt(0)}
-          titleStyle={{
-            fontFamily: fontFamily.Medium,
-            fontSize: 25,
-            marginTop: 5,
-          }}
-          containerStyle={{ backgroundColor: "#2F89FC" }}
-        />
+        <View>
+          <Avatar
+            size={80}
+            rounded
+            title={profileData.fullName.charAt(0)}
+            titleStyle={{
+              fontFamily: fontFamily.Medium,
+              fontSize: 35,
+              marginTop: 0,
+            }}
+            containerStyle={{ backgroundColor: "#2F89FC" }}
+          />
+          <AvatarUploader />
+        </View>
         <View
           style={{
             justifyContent: "center",
