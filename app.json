@@ -47,6 +47,10 @@
       "expo-router",
       [
         "expo-notifications",
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        },
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#002C56"
