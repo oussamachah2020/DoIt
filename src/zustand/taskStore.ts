@@ -6,6 +6,9 @@ interface ITaskStoreType {
 
   openCalendarModal: boolean;
   setOpenCalendarModal: (value: boolean) => void;
+
+  uploadedImagePath: string;
+  setUploadedImagePath: (path: string) => void;
 }
 
 export const useTaskStore = create<ITaskStoreType>((set) => ({
@@ -14,4 +17,8 @@ export const useTaskStore = create<ITaskStoreType>((set) => ({
   openCalendarModal: false,
   setOpenCalendarModal: (value: boolean) =>
     set(() => ({ openCalendarModal: value })),
+
+  uploadedImagePath: "",
+  setUploadedImagePath: (value: string) =>
+    set(() => ({ uploadedImagePath: value })),
 }));

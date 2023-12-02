@@ -1,4 +1,4 @@
-import { Tabs, router } from "expo-router";
+import { Tabs, router, usePathname } from "expo-router";
 import { fontFamily } from "@constants/typography";
 import { PaperProvider } from "react-native-paper";
 import {
@@ -35,6 +35,8 @@ export default function AppLayout() {
   const responseListener = useRef();
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
+  const path = usePathname();
+
   const saveProfileInfo = async () => {
     if (session?.user.id) {
       // Check if a profile with the same userId exists
@@ -60,8 +62,6 @@ export default function AppLayout() {
 
         if (data) {
           console.log("Profile registered successfully");
-        } else {
-          console.error(error);
         }
       } else {
         console.log("Profile already exists");
@@ -111,23 +111,23 @@ export default function AppLayout() {
     }
   }
 
-  function sendNotifReminder() {
-    fetch("https://doti-notifications.onrender.com/send-notification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: session?.user.id,
-        title: "Daily Reminder",
-        content: "Don't forget today's tasks",
-      }),
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.error(err));
-  }
+  // function sendNotifReminder() {
+  //   fetch("https://doti-notifications.onrender.com/send-notification", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       userId: session?.user.id,
+  //       title: "Daily Reminder",
+  //       content: "Don't forget today's tasks",
+  //     }),
+  //   })
+  //     .then((res) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err) => console.error(err));
+  // }
 
   useEffect(() => {
     save_push_token();
@@ -137,28 +137,32 @@ export default function AppLayout() {
     saveProfileInfo();
   }, [session?.user.id]);
 
-  useEffect(() => {
-    // Set up an interval to fire the fetch request once per day (in milliseconds)
-    const interval = 24 * 60 * 60 * 1000; // 24 hours
+  // useEffect(() => {
+  //   // Set up an interval to fire the fetch request once per day (in milliseconds)
+  //   const interval = 24 * 60 * 60 * 1000; // 24 hours
 
-    // Initial trigger when the component mounts
-    sendNotifReminder();
+  //   // Initial trigger when the component mounts
+  //   sendNotifReminder();
 
-    // Set up the interval to trigger the function once per day
-    const intervalId = setInterval(() => {
-      sendNotifReminder();
-    }, interval);
+  //   // Set up the interval to trigger the function once per day
+  //   const intervalId = setInterval(() => {
+  //     sendNotifReminder();
+  //   }, interval);
 
-    // Clear the interval when the component unmounts to prevent memory leaks
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [session?.user.id]);
+  //   // Clear the interval when the component unmounts to prevent memory leaks
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [session?.user.id]);
+
+  console.log(path);
 
   return (
     <React.Fragment>
       <StatusBar barStyle={"dark-content"} />
-      <FloatButton showModal={showModal} />
+      {path !== "/profile" && path !== "/support" && (
+        <FloatButton showModal={showModal} />
+      )}
 
       <BottomModal />
       <PaperProvider>

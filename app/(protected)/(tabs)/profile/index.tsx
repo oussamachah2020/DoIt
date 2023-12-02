@@ -5,16 +5,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Avatar } from "@rneui/themed";
 import { useAuthStore } from "@store/authStore";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Constants from "expo-constants";
 import AvatarUploader from "@components/AvatarUploader";
+import ProfileMenu from "@components/ProfileMenu";
+import { useTaskStore } from "@store/taskStore";
 
 function profile() {
-  const { setSession, session } = useAuthStore();
+  const { session } = useAuthStore();
+  const { uploadedImagePath } = useTaskStore();
   const [profileData, setProfileData] = useState({
     email: "",
     fullName: "",
   });
+  const [imageURL, setImageURL] = useState("");
 
   async function getProfile() {
     const { data: profile, error } = await supabase
@@ -34,9 +38,44 @@ function profile() {
     }
   }
 
+  const getAvatarUrl = async () => {
+    const avatar_url = await AsyncStorage.getItem("avatar_url");
+
+    if (avatar_url) {
+      setImageURL(avatar_url ?? "");
+    }
+  };
+
+  useEffect(() => {
+    try {
+      if (uploadedImagePath) {
+        const { data } = supabase.storage
+          .from("avatars")
+          .getPublicUrl(uploadedImagePath);
+
+        if (data) {
+          setImageURL(data.publicUrl);
+          AsyncStorage.setItem("avatar_url", data.publicUrl);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+    }
+  }, [uploadedImagePath]);
+
   useEffect(() => {
     getProfile();
-  }, []);
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    try {
+      getAvatarUrl();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [session?.user?.id]);
+
+  console.log("image url: ", imageURL);
 
   return (
     <View style={styles.profileContainer}>
@@ -46,18 +85,29 @@ function profile() {
           alignItems: "center",
         }}
       >
-        <View>
-          <Avatar
-            size={80}
-            rounded
-            title={profileData.fullName.charAt(0)}
-            titleStyle={{
-              fontFamily: fontFamily.Medium,
-              fontSize: 35,
-              marginTop: 0,
-            }}
-            containerStyle={{ backgroundColor: "#2F89FC" }}
-          />
+        <View style={{}}>
+          {imageURL !== "" ? (
+            <Image
+              source={{
+                uri: imageURL,
+              }}
+              alt="avatar"
+              style={{ width: 120, height: 120, borderRadius: 100 }} // Set dimensions as needed
+              resizeMode="contain" // Adjust resizeMode as per your requirement
+            />
+          ) : (
+            <Avatar
+              size={120}
+              rounded
+              title={profileData.fullName.charAt(0)}
+              titleStyle={{
+                fontFamily: fontFamily.Medium,
+                fontSize: 35,
+                marginTop: 0,
+              }}
+              containerStyle={{ backgroundColor: "#2F89FC" }}
+            />
+          )}
           <AvatarUploader />
         </View>
         <View
@@ -71,7 +121,8 @@ function profile() {
           <Text style={styles.email}>{profileData.email}</Text>
         </View>
       </View>
-      <TouchableOpacity
+      <ProfileMenu />
+      {/* <TouchableOpacity
         style={{
           marginTop: 50,
           justifyContent: "center",
@@ -82,22 +133,30 @@ function profile() {
           borderRadius: 10,
         }}
         onPress={() => {
-          setSession(null);
-          AsyncStorage.clear();
+         
         }}
       >
         <Text style={{ color: "#fff", fontFamily: fontFamily.semiBold }}>
           Logout
         </Text>
-      </TouchableOpacity>
-      <Text
+      </TouchableOpacity> */}
+      <View
         style={{
-          fontFamily: fontFamily.semiBold,
-          marginTop: 300,
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        V {Constants.expoConfig?.version}
-      </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.semiBold,
+            position: "absolute",
+            bottom: -300,
+            fontSize: 16,
+          }}
+        >
+          V {Constants.expoConfig?.version}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -106,9 +165,7 @@ export default profile;
 
 const styles = StyleSheet.create({
   profileContainer: {
-    marginTop: 100,
-    justifyContent: "center",
-    alignItems: "center",
+    marginTop: 80,
   },
   username: {
     fontFamily: fontFamily.semiBold,
