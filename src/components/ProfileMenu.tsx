@@ -13,16 +13,16 @@ type Props = {};
 const ProfileMenu = (props: Props) => {
   const { setSession } = useAuthStore();
   const profileItems = [
+    // {
+    //   id: 1,
+    //   label: "Support",
+    //   icon: <FontAwesome name="support" size={24} color="black" />,
+    //   action: () => {
+    //     router.push("/support");
+    //   },
+    // },
     {
       id: 1,
-      label: "Support",
-      icon: <FontAwesome name="support" size={24} color="black" />,
-      action: () => {
-        router.push("/support");
-      },
-    },
-    {
-      id: 2,
       label: "Sign Out",
       icon: <AntDesign name="logout" size={24} color="black" />,
       action: () => {

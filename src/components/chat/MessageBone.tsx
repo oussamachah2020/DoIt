@@ -1,44 +1,73 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import Bubbles from "./Bubbles";
 
-type Props = {};
+type Props = {
+  messages: any;
+};
 
-const messages = [
-  {
-    id: "1",
-    content: "hello",
-    sent_at: new Date(),
-    sent_by_me: true,
-  },
-  {
-    id: "2",
-    content: "hello",
-    sent_at: new Date(),
-    sent_by_me: false,
-  },
-  {
-    id: "3",
-    content: "hello",
-    sent_at: new Date(),
-    sent_by_me: false,
-  },
-  {
-    id: "4",
-    content: "hello",
-    sent_at: new Date(),
-    sent_by_me: true,
-  },
-];
+const MessageBone = ({ messages }: Props) => {
+  const messagesEndRef = React.useRef<any>(null);
 
-const MessageBone = (props: Props) => {
+  useEffect(() => {
+    const lastMessage = messagesEndRef.current?.lastElementChild;
+
+    if (lastMessage) {
+      lastMessage.scrollIntoView({ behavior: "instant" });
+    }
+  }, [messages]);
+
   return (
-    <ScrollView>
-      {messages.map((msg) => (
-        <Bubbles key={msg.id} msg={msg} />
-      ))}
-    </ScrollView>
+    <SafeAreaView style={styles.containerHome}>
+      <ScrollView
+        ref={messagesEndRef}
+        onContentSizeChange={() =>
+          messagesEndRef.current?.scrollToEnd({ animated: true })
+        }
+        onLayout={() => {
+          messagesEndRef.current?.scrollToEnd({ animated: true });
+        }}
+        // refreshControl={
+        // 	<RefreshControl
+        // 		refreshing={is_loading}
+        // 		onRefresh={refresh_chat}
+        // 	/>
+        // }
+      >
+        {messages.map((message: any) => (
+          <Bubbles msg={message} key={message.id} />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default MessageBone;
+
+const styles = StyleSheet.create({
+  containerHome: {
+    width: "100%",
+    flex: 1,
+    height: "100%",
+    // paddingTop: 10,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+  textCenter: {
+    textAlign: "center",
+    marginTop: 20,
+  },
+  NoMessagesText: {
+    textAlign: "center",
+    flex: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 50,
+    marginTop: 167,
+    opacity: 0.4,
+    fontSize: 16,
+  },
+});

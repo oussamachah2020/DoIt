@@ -39,7 +39,7 @@ function profile() {
   }
 
   const getAvatarUrl = async () => {
-    const avatar_url = await AsyncStorage.getItem("avatar_url");
+    const avatar_url = await AsyncStorage.getItem("avatar_urlz");
 
     if (avatar_url) {
       setImageURL(avatar_url ?? "");

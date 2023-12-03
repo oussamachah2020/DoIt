@@ -50,17 +50,10 @@ const ToolBar = () => {
 
 const support = (props: Props) => {
   return (
-    <SafeAreaView>
+    <>
       <ToolBar />
-      <View
-        style={{
-          position: "relative",
-          height: "100%",
-        }}
-      >
-        <DiscussionBody />
-      </View>
-    </SafeAreaView>
+      <DiscussionBody />
+    </>
   );
 };
 
