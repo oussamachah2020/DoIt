@@ -27,7 +27,7 @@ const ProfileMenu = (props: Props) => {
       icon: <AntDesign name="logout" size={24} color="black" />,
       action: () => {
         setSession(null);
-        AsyncStorage.removeItem("session");
+        AsyncStorage.clear();
       },
     },
   ];

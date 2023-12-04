@@ -26,6 +26,21 @@ export const uploadAvatar = async (
   }
 };
 
+export const updateAvatarUrl = async (userId: string, avatarUrl: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: avatarUrl })
+    .eq("userId", userId);
+
+  if (error) {
+    return Promise.reject(error);
+  }
+
+  if (data) {
+    return Promise.resolve(data);
+  }
+};
+
 
 export const send_message = async (
   content: string,

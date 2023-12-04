@@ -10,6 +10,7 @@ import Constants from "expo-constants";
 import AvatarUploader from "@components/AvatarUploader";
 import ProfileMenu from "@components/ProfileMenu";
 import { useTaskStore } from "@store/taskStore";
+import { updateAvatarUrl } from "@loaders/profile";
 
 function profile() {
   const { session } = useAuthStore();
@@ -17,13 +18,13 @@ function profile() {
   const [profileData, setProfileData] = useState({
     email: "",
     fullName: "",
+    avatar_url: null,
   });
-  const [imageURL, setImageURL] = useState("");
 
   async function getProfile() {
     const { data: profile, error } = await supabase
       .from("profiles")
-      .select(`email, full_name`)
+      .select(`email, full_name, avatar_url`)
       .eq("userId", session?.user.id)
       .single();
 
@@ -32,50 +33,38 @@ function profile() {
       setProfileData({
         email: profile.email,
         fullName: profile.full_name,
+        avatar_url: profile.avatar_url,
       });
     } else {
       console.error(error);
     }
   }
 
-  const getAvatarUrl = async () => {
-    const avatar_url = await AsyncStorage.getItem("avatar_urlz");
-
-    if (avatar_url) {
-      setImageURL(avatar_url ?? "");
-    }
-  };
+  console.log(profileData.avatar_url);
 
   useEffect(() => {
     try {
+      if (!session) {
+        return;
+      }
+
       if (uploadedImagePath) {
         const { data } = supabase.storage
           .from("avatars")
           .getPublicUrl(uploadedImagePath);
 
         if (data) {
-          setImageURL(data.publicUrl);
-          AsyncStorage.setItem("avatar_url", data.publicUrl);
+          updateAvatarUrl(session?.user.id, data.publicUrl);
         }
       }
     } catch (error) {
       console.error("Error fetching image URL:", error);
     }
-  }, [uploadedImagePath]);
+  }, [session, uploadedImagePath]);
 
   useEffect(() => {
     getProfile();
-  }, [session?.user?.id]);
-
-  useEffect(() => {
-    try {
-      getAvatarUrl();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [session?.user?.id]);
-
-  console.log("image url: ", imageURL);
+  }, [session?.user?.id, uploadedImagePath]);
 
   return (
     <View style={styles.profileContainer}>
@@ -86,10 +75,10 @@ function profile() {
         }}
       >
         <View style={{}}>
-          {imageURL !== "" ? (
+          {profileData.avatar_url !== null ? (
             <Image
               source={{
-                uri: imageURL,
+                uri: profileData.avatar_url,
               }}
               alt="avatar"
               style={{ width: 120, height: 120, borderRadius: 100 }} // Set dimensions as needed
