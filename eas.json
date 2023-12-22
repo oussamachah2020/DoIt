@@ -1,7 +1,6 @@
 {
   "cli": {
-    "version": ">= 5.6.0",
-    "image": "latest"
+    "version": ">= 5.6.0"
   },
   "build": {
     "development": {
@@ -10,7 +9,8 @@
     },
     "preview": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest"
       }
     },
     "production": {}
