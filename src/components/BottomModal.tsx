@@ -15,6 +15,7 @@ import CalendarModal from "./CalendarModal";
 import { priorities } from "@constants/data";
 import { createTask } from "@loaders/tasks";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import { Ionicons } from "@expo/vector-icons";
 
 export const BottomModal = () => {
   const { openTaskForm, setOpenTaskForm, setOpenCalendarModal } =
@@ -23,7 +24,10 @@ export const BottomModal = () => {
 
   const [task, setTask] = useState("");
   const [visibleMenu, setVisibleMenu] = React.useState(false);
-  const [priority, setPriority] = React.useState("No Priority");
+  const [priority, setPriority] = React.useState({
+    value: "No Priority",
+    color: "#30E3CA",
+  });
   const [selectedDate, setSelectedDate] = React.useState(
     formatDate(new Date())
   );
@@ -39,7 +43,7 @@ export const BottomModal = () => {
   };
 
   const createNewTask = async () => {
-    createTask(task, selectedDate, priority, session?.user.id)
+    createTask(task, selectedDate, priority.value, session?.user.id)
       .then(() => {
         setTask("");
         setOpenTaskForm(false);
@@ -82,7 +86,7 @@ export const BottomModal = () => {
             style={{
               backgroundColor: "#fff",
               width: "50%",
-              display: visibleMenu ? "flex" : "none", // Toggle visibility
+              display: visibleMenu ? "flex" : "none",
             }}
             entering={SlideInDown}
             exiting={SlideOutDown}
@@ -102,7 +106,10 @@ export const BottomModal = () => {
                   />
                 )}
                 onPress={() => {
-                  setPriority(priority.value);
+                  setPriority({
+                    value: priority.value,
+                    color: priority.iconColor,
+                  });
                   setVisibleMenu(false);
                 }}
               />
@@ -153,7 +160,11 @@ export const BottomModal = () => {
             }}
           >
             <TouchableOpacity onPress={toggleMenu}>
-              <Flag />
+              <Ionicons
+                name="flag"
+                size={20}
+                style={{ color: priority.color }}
+              />
             </TouchableOpacity>
             <TouchableOpacity onPress={showModal}>
               <CalendarIcon />

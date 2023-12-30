@@ -29,7 +29,7 @@ export default function planning() {
           const numItems = Math.floor(Math.random() * 3 + 1);
           for (let j = 0; j < numItems; j++) {
             items[strTime].push({
-              name: "Item for " + strTime + " #" + j,
+              name: "Item for " + strTime,
               height: Math.max(10, Math.floor(Math.random() * 150)),
               day: strTime,
             });

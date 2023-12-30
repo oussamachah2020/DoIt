@@ -179,7 +179,7 @@ export function UndoneTasks() {
               <Menu.Item
                 onPress={() => {
                   router.push({
-                    pathname: "/(protected)/(task_details)/task_details",
+                    pathname: "/task_details",
                     params: { taskId: task.id },
                   });
                 }}

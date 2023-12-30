@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import { Text, View } from "react-native";
 import { useTaskStore } from "@store/taskStore";
@@ -36,7 +36,6 @@ const CalendarModal = ({ selected, setSelected }: Props) => {
       <Calendar
         onDayPress={(day) => {
           setSelected(day.dateString);
-          // setOpenCalendarModal(false);
           console.log(day);
         }}
         initialDate={formatDate(new Date())}
@@ -50,6 +49,22 @@ const CalendarModal = ({ selected, setSelected }: Props) => {
       />
       <View
         style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 10,
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: fontFamily.Medium,
+            fontSize: 16,
+          }}
+        >
+          {selected}
+        </Text>
+      </View>
+      <View
+        style={{
           flexDirection: "row",
           justifyContent: "space-around",
           alignItems: "center",
@@ -59,6 +74,23 @@ const CalendarModal = ({ selected, setSelected }: Props) => {
       >
         <Button
           title={"Cancel"}
+          containerStyle={{
+            marginTop: 16,
+            width: 100,
+          }}
+          titleStyle={{
+            color: "#000",
+          }}
+          buttonStyle={{
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            borderColor: "#2F89FC",
+            borderWidth: 1,
+          }}
+          onPress={() => setOpenCalendarModal(false)}
+        />
+        <Button
+          title={"Confirm"}
           containerStyle={{
             marginTop: 16,
             width: 100,

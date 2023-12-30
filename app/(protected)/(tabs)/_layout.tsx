@@ -160,9 +160,9 @@ export default function AppLayout() {
   return (
     <React.Fragment>
       <StatusBar barStyle={"dark-content"} />
-      {path !== "/profile" && path !== "/support" && (
-        <FloatButton showModal={showModal} />
-      )}
+      {path !== "/profile" &&
+        path !== "/support" &&
+        path !== "/task_details" && <FloatButton showModal={showModal} />}
 
       <BottomModal />
       <PaperProvider>
