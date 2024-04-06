@@ -111,51 +111,18 @@ export default function AppLayout() {
     }
   }
 
-  // function sendNotifReminder() {
-  //   fetch("https://doti-notifications.onrender.com/send-notification", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       userId: session?.user.id,
-  //       title: "Daily Reminder",
-  //       content: "Don't forget today's tasks",
-  //     }),
-  //   })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => console.error(err));
-  // }
 
   useEffect(() => {
     save_push_token();
   }, [expoPushToken]);
 
   useEffect(() => {
+    if (!session) {
+      return;
+    }
+
     saveProfileInfo();
   }, [session?.user.id]);
-
-  // useEffect(() => {
-  //   // Set up an interval to fire the fetch request once per day (in milliseconds)
-  //   const interval = 24 * 60 * 60 * 1000; // 24 hours
-
-  //   // Initial trigger when the component mounts
-  //   sendNotifReminder();
-
-  //   // Set up the interval to trigger the function once per day
-  //   const intervalId = setInterval(() => {
-  //     sendNotifReminder();
-  //   }, interval);
-
-  //   // Clear the interval when the component unmounts to prevent memory leaks
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [session?.user.id]);
-
-  console.log(path);
 
   return (
     <React.Fragment>
@@ -202,7 +169,7 @@ export default function AppLayout() {
               },
             }}
           />
-          <Tabs.Screen
+          {/* <Tabs.Screen
             name="planning/index"
             options={{
               tabBarLabel: "Planning",
@@ -222,7 +189,7 @@ export default function AppLayout() {
                 }
               },
             }}
-          />
+          /> */}
           <Tabs.Screen
             name="profile/index"
             options={{

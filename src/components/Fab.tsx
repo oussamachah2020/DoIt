@@ -5,7 +5,7 @@ import { FAB, Portal, PaperProvider } from "react-native-paper";
 const FloatButton = ({ showModal }: { showModal: () => void }) => {
   const [state, setState] = React.useState({ open: false });
   const { open } = state;
-  const setOpenTaskForm = useTaskStore((v) => v.setOpenTaskForm);
+  const { setOpenTaskForm, setOpenEventForm } = useTaskStore();
 
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
 
@@ -26,6 +26,11 @@ const FloatButton = ({ showModal }: { showModal: () => void }) => {
             icon: "plus",
             label: "Add task",
             onPress: () => setOpenTaskForm(true),
+          },
+          {
+            icon: "calendar",
+            label: "New Event",
+            onPress: () => setOpenEventForm(true),
           },
           {
             icon: "bell",

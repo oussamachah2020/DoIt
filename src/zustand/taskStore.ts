@@ -9,11 +9,18 @@ interface ITaskStoreType {
 
   uploadedImagePath: string;
   setUploadedImagePath: (path: string) => void;
+
+  openEventForm: boolean;
+  setOpenEventForm: (value: boolean) => void;
 }
 
 export const useTaskStore = create<ITaskStoreType>((set) => ({
   openTaskForm: false,
   setOpenTaskForm: (value: boolean) => set(() => ({ openTaskForm: value })),
+
+  openEventForm: false,
+  setOpenEventForm: (value: boolean) => set(() => ({ openEventForm: value })),
+
   openCalendarModal: false,
   setOpenCalendarModal: (value: boolean) =>
     set(() => ({ openCalendarModal: value })),

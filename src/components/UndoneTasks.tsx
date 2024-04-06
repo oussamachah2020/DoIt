@@ -99,7 +99,7 @@ export function UndoneTasks() {
     getTasks();
   }, [tasksData]);
 
-  if (tasksData.length == 0) {
+  if (tasksData && tasksData.length == 0) {
     return (
       <View
         style={{
@@ -144,7 +144,7 @@ export function UndoneTasks() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {tasksData.map((task) => (
+        {tasksData?.map((task) => (
           <TouchableOpacity style={styles.taskContainer} key={task.id}>
             <View
               style={{

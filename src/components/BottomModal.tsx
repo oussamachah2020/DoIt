@@ -16,6 +16,7 @@ import { priorities } from "@constants/data";
 import { createTask } from "@loaders/tasks";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import { Ionicons } from "@expo/vector-icons";
+import EventFormModal from "./EventFormModal";
 
 export const BottomModal = () => {
   const { openTaskForm, setOpenTaskForm, setOpenCalendarModal } =
@@ -66,6 +67,7 @@ export const BottomModal = () => {
   return (
     <React.Fragment>
       <CalendarModal selected={selectedDate} setSelected={setSelectedDate} />
+      <EventFormModal />
       <SafeAreaProvider
         style={{
           position: "absolute",

@@ -6,3 +6,9 @@ export interface ITask {
   do_at: string;
   done: boolean;
 }
+
+export interface AgendaEvent {
+  todo: string;
+  description: string;
+  user: string | undefined;
+}

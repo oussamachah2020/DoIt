@@ -7,7 +7,6 @@ import { Link } from "expo-router";
 import { supabase } from "@lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useAuthStore } from "../../src/zustand/authStore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { login } from "@loaders/auth";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
@@ -15,20 +14,12 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [visible, setVisile] = useState(true);
+  const [visible, setVisible] = useState(true);
   const [showError, setShowError] = useState(false);
   const togglePasswordVisibility = () => {
-    setVisile(!visible);
+    setVisible(!visible);
   };
   const { setSession, setIsAuth } = useAuthStore();
-
-  const storeData = async (session: Session) => {
-    try {
-      await AsyncStorage.setItem("session", JSON.stringify(session));
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   async function Login() {
     setLoading(true);
@@ -38,7 +29,6 @@ export default function SignIn() {
         console.log("login session: ", session);
         setIsAuth(true);
         setSession(session);
-        storeData(session);
         Toast.show({
           type: ALERT_TYPE.SUCCESS,
           title: "Success",
@@ -54,10 +44,6 @@ export default function SignIn() {
         });
       });
   }
-
-  // useEffect(() => {
-
-  // }, [isAuth])
 
   return (
     <View

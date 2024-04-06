@@ -1,5 +1,5 @@
 import { supabase } from "@lib/supabase";
-import { ITask } from "src/types/Entities";
+import { AgendaEvent, ITask } from "src/types/Entities";
 
 export const createTask = async (
   label: string,
@@ -97,4 +97,25 @@ export const removeTask = async (taskId: string) => {
   if (error) {
     return Promise.reject(error);
   }
+};
+
+export const createEvent = async (event: AgendaEvent) => {
+  const { error } = await supabase.from("agenda").insert(event);
+
+  if (error) {
+    return Promise.reject(error);
+  }
+};
+
+export const fetchEvents = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("agenda")
+    .select()
+    .eq("user", userId);
+
+  if (error || data == null) {
+    return Promise.reject(error);
+  }
+
+  return data;
 };

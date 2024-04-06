@@ -1,7 +1,6 @@
 import { BottomModal } from "@components/BottomModal";
 import { fontFamily } from "@constants/typography";
 import { supabase } from "@lib/supabase";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Avatar } from "@rneui/themed";
 import { useAuthStore } from "@store/authStore";
 import React, { useEffect, useState } from "react";

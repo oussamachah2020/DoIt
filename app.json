@@ -2,7 +2,7 @@
   "expo": {
     "name": "todo",
     "slug": "todo",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/notification-icon.png",
     "scheme": "com.supabase",
